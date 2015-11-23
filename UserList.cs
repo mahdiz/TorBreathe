@@ -40,9 +40,9 @@ namespace BridgeDistribution
 			return dict.Keys.ToArray();
 		}
 
-		public List<User> GetUsers()
+		public User[] GetUsers()
 		{
-			return dict.Values.ToList();
+            return dict.Values.ToArray();
 		}
 
 		public void Add(User u)

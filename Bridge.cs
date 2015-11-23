@@ -23,5 +23,10 @@ namespace BridgeDistribution
 			//Debug.WriteLineIf(IsBlocked == true, "The bridge is already blocked.");
 			IsBlocked = true;
 		}
+
+        public static void Reset()
+        {
+            idGen = 0;
+        }
 	}
 }

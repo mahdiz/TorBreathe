@@ -11,7 +11,7 @@ namespace BridgeDistribution
 		private static int idGen;
 
 		public int Id { get; private set; }
-		public List<Bridge> Bridges;
+		public HashSet<Bridge> Bridges;
 
 		public bool IsThirsty
 		{
@@ -24,12 +24,17 @@ namespace BridgeDistribution
 		public User()
 		{
 			Id = idGen++;
-			Bridges = new List<Bridge>();
+			Bridges = new HashSet<Bridge>(new BridgeComparer());
 		}
 
         public override string ToString()
         {
             return Id.ToString();
+        }
+
+        public static void Reset()
+        {
+            idGen = 0;
         }
 	}
 }
