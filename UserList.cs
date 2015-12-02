@@ -27,6 +27,9 @@ namespace BridgeDistribution
 			}
 		}
 
+        /// <summary>
+        /// Returns the number of users (including corrupt ones) who have no unblocked bridges.
+        /// </summary>
 		public IEnumerable<User> ThirstyUsers
 		{
 			get

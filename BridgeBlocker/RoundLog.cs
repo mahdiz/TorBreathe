@@ -19,7 +19,7 @@ namespace BridgeDistribution
         /// <summary>
         /// Number of users.
         /// </summary>
-        public int UsersCount { get { return UsersSuccessMap.Length; } }
+        public int UsersCount { get; private set; }
         
         /// <summary>
         /// Number of corrupt users in this round.
@@ -37,49 +37,29 @@ namespace BridgeDistribution
         public int BlockedCount { get; private set; }
 
         /// <summary>
-        /// Bit array representing the list of successfull/unsuccessful users so far. 
-        /// If the i-th bit is true, then the i-th user in the Distributors users list is successful, otherwise it is unsuccessful.
-        /// </summary>
-        public BitArray UsersSuccessMap { get; private set; }
-
-        /// <summary>
         /// Number of users (including corrupt users) who have no unblocked bridge.
         /// </summary>
-        public int ThirstyCount
-        {
-            get
-            {
-                return UsersSuccessMap.Cast<bool>().Count(u => u == false);
-            }
-        }
+        public int ThirstyCount { get; private set; }
 
-        public RoundLog(int round, int t, int m, int b, UserList users)
+        public RoundLog(int round, UserList users, List<Bridge>[] bridges)
         {
-            Debug.Assert(m >= b);
-
             Round = round;
-            CorruptsCount = t;
+            UsersCount = users.Count;
+            CorruptsCount = users.Count(u => u is CorruptUser);
+
+            var m = 0;
+            var b = 0;
+
+            var repeatCount = bridges.Length;
+            for (int j = 0; j < repeatCount; j++)
+            {
+                m += bridges[j].Count;
+                b += bridges[j].Count(x => x.IsBlocked);
+            }
+            
             BridgeCount = m;
             BlockedCount = b;
-            UsersSuccessMap = new BitArray(users.Count);
-
-            int i = 0;
-            foreach (var user in users)
-            {
-                UsersSuccessMap.Set(i, !users[i].IsThirsty);
-                i++;
-            }
-        }
-
-        public RoundLog(int round, int t, int m, int b, BitArray usersSuccessMap)
-        {
-            Debug.Assert(m >= b);
-
-            Round = round;
-            CorruptsCount = t;
-            BridgeCount = m;
-            BlockedCount = b;
-            UsersSuccessMap = new BitArray(usersSuccessMap);
+            ThirstyCount = users.ThirstyUsers.Where(u => !(u is CorruptUser)).Count();
         }
 
         public override string ToString()

@@ -9,10 +9,11 @@ namespace BridgeDistribution
 {
     public class RunLog : IEnumerable<RoundLog>
     {
-        private List<RoundLog> roundsLog = new List<RoundLog>();
-
         public RoundLog this[int i] { get { return roundsLog[i]; } }
         public int RoundsCount { get { return roundsLog.Count; } }
+
+        private List<RoundLog> roundsLog = new List<RoundLog>();
+        private int blockedSoFar;
 
         public void Add(RoundLog log)
         {

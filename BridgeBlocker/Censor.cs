@@ -11,6 +11,7 @@ namespace BridgeDistribution
 	{
 		Aggressive,
         Prudent,
+        Stochastic
 	}
 
 	internal class CorruptUser : User
@@ -19,8 +20,10 @@ namespace BridgeDistribution
 
     internal class Censor
     {
-        public AttackModel AttackModel;
-        //public int MemorizedCount { get { return MemorizedBridges.Count; } }
+        public AttackModel AttackModel { get; set; }
+        public double BlockingProbability { get; set; }
+        private Random randGen;
+
         public int MemorizedCount
         {
             get
@@ -35,11 +38,13 @@ namespace BridgeDistribution
 		private List<CorruptUser> CorruptUsers = new List<CorruptUser>();
         //private HashSet<Bridge> MemorizedBridges = new HashSet<Bridge>(new BridgeComparer());
 
-		public Censor(Distributor d, AttackModel attackModel)
+		public Censor(Distributor d, AttackModel attackModel, double blockProbability, int seed)
 		{
 			this.d = d;
 			AttackModel = attackModel;
+            BlockingProbability = blockProbability;
             d.OnYield += OnDistYield;
+            randGen = new Random(seed);     // The seed must be different from distributor's RNG seed
 		}
 
 		public void AddCorruptUsers(int n)
@@ -57,7 +62,7 @@ namespace BridgeDistribution
 			switch (AttackModel)
 			{
 				case AttackModel.Aggressive:
-					// block all bridges learned by the corrupt users
+					// Block all bridges learned by the corrupt users
 					CorruptUsers.ForEach(
                         delegate(CorruptUser u)
                         {
@@ -69,6 +74,14 @@ namespace BridgeDistribution
 				case AttackModel.Prudent:
                     PrudentBlocking(threshold);
 					break;
+
+                case AttackModel.Stochastic:
+                    // For each unique bridge learned, block with the given probability.
+                    var bridgeSet = new HashSet<Bridge>(CorruptUsers.SelectMany(u => u.Bridges));
+                    foreach (var bridge in bridgeSet)
+                        if (randGen.NextDouble() < BlockingProbability)
+                            bridge.Block();
+                    break;
 
                 default:
                     throw new InvalidOperationException("Invaid attack model!");
