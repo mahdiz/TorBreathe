@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BridgeDistribution
 {
-	public delegate void YieldHandler(int threshold);
+	public delegate void YieldHandler(int threshold, int repeatCount);
 	public delegate bool RoundEndHandler(int round, UserList users, List<Bridge>[] bridges);
     public delegate void Distribute(List<Bridge> B);
 
@@ -109,25 +109,15 @@ namespace BridgeDistribution
                     }
                     else
                     {
-                        //var mNew = (int)Math.Ceiling((double)n / repeatCount);
-                        //foreach (var bList in bridges)
-                        //    RecruitExtend(bList, mNew);
-                        // T
-
                         // Give each user a fresh bridge that has never been assigned to any user
-                        //int k = 0;
                         foreach (var user in Users)
-                        {
-                            //user.Bridges.Add(bridges[k / mNew][k % mNew]);
                             user.Bridges.Add(new Bridge());
-                            //k++;
-                        }
                         stable = true;
                     }
 
                     // Let the users perform their job
                     if (OnYield != null)
-                        OnYield(threshold(i));
+                        OnYield(threshold(i), repeatCount);
 
                     // Log the end of round
                     if (OnRoundEnd != null)

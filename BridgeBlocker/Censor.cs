@@ -57,7 +57,7 @@ namespace BridgeDistribution
 			}
 		}
 
-        private void OnDistYield(int threshold)
+        private void OnDistYield(int threshold, int repeatCount)
 		{
 			switch (AttackModel)
 			{
@@ -72,7 +72,7 @@ namespace BridgeDistribution
 					break;
 
 				case AttackModel.Prudent:
-                    PrudentBlocking(threshold);
+                    PrudentBlocking(threshold, repeatCount);
 					break;
 
                 case AttackModel.Stochastic:
@@ -93,7 +93,7 @@ namespace BridgeDistribution
         /// This can be done by blocking exactly "threshold" bridges.
         /// </summary>
         /// <param name="threshold">Distributor's blocking threshold for proceeding to the next round.</param>
-        private void PrudentBlocking(int threshold)
+        private void PrudentBlocking(int threshold, int repeatCount)
         {
             int numBlocked = 0;
             foreach (var u in CorruptUsers)
@@ -102,7 +102,7 @@ namespace BridgeDistribution
                 {
                     if (!bridge.IsBlocked)
                     {
-                        if (numBlocked < threshold)
+                        if (numBlocked < threshold * repeatCount)
                         {
                             bridge.Block();
                             numBlocked++;
@@ -111,6 +111,7 @@ namespace BridgeDistribution
                             // may be among previously-memorized bridges. If so, just remove it from mem list.
                             //MemorizedBridges.Remove(bridge);
                         }
+                        else return;
                         //else MemorizedBridges.Add(bridge);
                     }
                 }

@@ -21,6 +21,7 @@ namespace BridgeDistribution
         private int defaultN = 4096;         // default number of users (must be >= 4)
         private bool stopped = true;
         private bool stopRequest, exitRequest;
+        private bool logIncConsidered;
         private Censor censor;
         private int blockedSoFar;
         private RunLog runLog;
@@ -47,11 +48,12 @@ namespace BridgeDistribution
         {
             if (stopped)
             {
-                stopped = stopRequest = exitRequest = false;
+                stopped = stopRequest = exitRequest = logIncConsidered = false;
 
                 dgvStats.Rows.Clear();
                 chPlots.Series.Clear();
                 btnStart.Text = "Stop";
+                cbLogY.Enabled = false;
                 blockedSoFar = 0;
                 User.Reset();
                 Bridge.Reset();
@@ -105,6 +107,8 @@ namespace BridgeDistribution
                     d.OnRoundEnd += OnRoundEnd;
                     d.Run(tbC.Value);
 
+                    logIncConsidered = cbLogY.Checked;
+                    cbLogY.Enabled = true;
                     if (rbMultipleRuns.Checked)
                     {
                         // Add one point to the plot for this run for each plot
@@ -140,9 +144,10 @@ namespace BridgeDistribution
             if (rbSingleRun.Checked)
             {
                 // Add one point to the plot for this round for each plot
-                chPlots.Series[cbThirsty.Text].Points.AddXY(round, log.ThirstyCount > 0 ? log.ThirstyCount : 1);
+                // (cbLogY.Checked ? 1 : 0) prevents log(zero) in log plots
+                chPlots.Series[cbThirsty.Text].Points.AddXY(round, log.ThirstyCount + (cbLogY.Checked ? 1 : 0));
                 chPlots.Series[cbm.Text].Points.AddXY(round, log.BridgeCount);
-                chPlots.Series[cbb.Text].Points.AddXY(round, log.BlockedCount > 0 ? log.BlockedCount : 1);
+                chPlots.Series[cbb.Text].Points.AddXY(round, log.BlockedCount + (cbLogY.Checked ? 1 : 0));
                 chPlots.Series[cbN.Text].Points.AddXY(round, N);
             }
 
@@ -217,7 +222,7 @@ namespace BridgeDistribution
                 chPlots.ChartAreas[0].AxisX.IsLogarithmic = cbLogX.Checked;
                 chPlots.ChartAreas[0].AxisY.IsLogarithmic = cbLogY.Checked;
 
-                chPlots.ChartAreas[0].RecalculateAxesScale();                
+                chPlots.ChartAreas[0].RecalculateAxesScale();
             }
         }
 
@@ -360,106 +365,15 @@ namespace BridgeDistribution
 
         private void cbLogY_CheckedChanged(object sender, EventArgs e)
         {
-            //int incdec = cbLogY.Checked ? 1 : -1;
-            //// Increment the Y-value of data points
-            //foreach (var series in chPlots.Series)
-            //{
-            //    foreach (var p in series.Points)
-            //        p.YValues[0] += incdec;
-            //}
+            // Increment the Y-value of data points to prevent log(zero)
+            int incdec = cbLogY.Checked ? (logIncConsidered ? 0 : 1) : (logIncConsidered ? -1 : 0);
+            foreach (var series in chPlots.Series)
+            {
+                foreach (var p in series.Points)
+                    p.YValues[0] += incdec;
+            }
+            logIncConsidered = (incdec >= 0);
             UpdatePlots();
-        }
-        
-        //private bool OnDraw(UserList users, List<Bridge> bridges, int round, int totalBlockedSoFar)
-        //{
-        //    SuspendLayout();
-
-        //    // delete previous tables
-        //    if (tables != null)
-        //        foreach (var table in tables)
-        //            Controls.Remove(table);
-
-        //    int n = users.Count;
-        //    int d = c * (int)Math.Log(n, 2);      // # of matrices
-        //    tables = new DataGridView[d];
-
-        //    for (int l = 0; l < d; l++)
-        //    {				
-        //        #region UI Settings
-        //        var t = new DataGridView();
-        //        t.SuspendLayout();
-        //        t.Font = new Font("Arial Narrow", 9);
-
-        //        var cellStyle = new DataGridViewCellStyle() 
-        //        { 
-        //            Alignment = DataGridViewContentAlignment.MiddleCenter,
-        //            WrapMode = DataGridViewTriState.True,
-        //            SelectionBackColor = t.DefaultCellStyle.BackColor,
-        //            SelectionForeColor = t.DefaultCellStyle.ForeColor
-        //        };
-
-        //        t.AllowUserToAddRows = false;
-        //        t.AllowUserToDeleteRows = false;
-        //        t.AllowUserToResizeColumns = false;
-        //        t.AllowUserToResizeRows = false;
-        //        t.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-        //        t.ColumnHeadersVisible = true;
-        //        t.RowHeadersVisible = false;
-        //        t.ColumnHeadersDefaultCellStyle = cellStyle;
-        //        t.DefaultCellStyle = cellStyle;
-        //        t.EnableHeadersVisualStyles = false;
-        //        t.ReadOnly = true;
-        //        #endregion
-
-        //        var cols = new DataGridViewColumn[w];
-        //        for (int i = 0; i < w; i++)
-        //        {
-        //            cols[i] = new DataGridViewTextBoxColumn()
-        //            {
-        //                HeaderText = bridges[l * w + i].Id.ToString(),
-        //                SortMode = DataGridViewColumnSortMode.NotSortable,
-        //                ReadOnly = true
-        //            };
-        //            cols[i].HeaderCell.Style.BackColor = Color.LemonChiffon;
-        //            if (bridges[l * w + i].IsBlocked)
-        //                cols[i].HeaderCell.Style.ForeColor = Color.Red;
-        //        }
-
-        //        t.Columns.AddRange(cols);
-        //        t.Width = (Width - 100) / d;
-        //        t.Height = (r + 1) * 30;
-
-        //        for (int i = 0; i < r; i++)
-        //        {
-        //            var labels = new string[w];
-        //            for (int j = 0; j < w; j++)
-        //                if (j * r + i < n)
-        //                {
-        //                    labels[j] = userShuffles[l][j * r + i].ToString();
-        //                    if (users[userShuffles[l][j * r + i]] is CorruptUser)
-        //                        labels[j] += "*";
-        //                }
-        //            t.Rows.Add(labels);
-        //        }
-
-        //        foreach (DataGridViewRow row in t.Rows)
-        //            row.Height = (t.Height - t.ColumnHeadersHeight - 2) / r;
-
-        //        t.Top = 10;
-        //        t.Left = 10 + l * (t.Width + 10);
-
-        //        Controls.Add(t);
-        //        t.PerformLayout();
-        //        t.ResumeLayout(false);
-        //        tables[l] = t;
-
-        //        ShowStats(users, bridges, w, r, round, totalBlockedSoFar);
-        //    }
-
-        //    ResumeLayout();
-        //    Application.DoEvents();
-        //    Thread.Sleep(800);
-        //    return stopped;
-        //}
+        }        
     }
 }

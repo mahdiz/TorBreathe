@@ -28,11 +28,11 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.pLeftPanel = new System.Windows.Forms.Panel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.rbAggressive = new System.Windows.Forms.RadioButton();
@@ -139,7 +139,7 @@
             this.groupBox1.Controls.Add(this.lStochastic);
             this.groupBox1.Controls.Add(this.rbPrudent);
             this.groupBox1.Controls.Add(this.tbStochastic);
-            this.groupBox1.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox1.Location = new System.Drawing.Point(10, 3);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(285, 153);
@@ -151,9 +151,10 @@
             // 
             this.rbAggressive.AutoSize = true;
             this.rbAggressive.Checked = true;
+            this.rbAggressive.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rbAggressive.Location = new System.Drawing.Point(12, 29);
             this.rbAggressive.Name = "rbAggressive";
-            this.rbAggressive.Size = new System.Drawing.Size(96, 24);
+            this.rbAggressive.Size = new System.Drawing.Size(98, 22);
             this.rbAggressive.TabIndex = 2;
             this.rbAggressive.TabStop = true;
             this.rbAggressive.Text = "Aggressive";
@@ -162,9 +163,10 @@
             // rbStochastic
             // 
             this.rbStochastic.AutoSize = true;
+            this.rbStochastic.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rbStochastic.Location = new System.Drawing.Point(12, 59);
             this.rbStochastic.Name = "rbStochastic";
-            this.rbStochastic.Size = new System.Drawing.Size(92, 24);
+            this.rbStochastic.Size = new System.Drawing.Size(100, 22);
             this.rbStochastic.TabIndex = 3;
             this.rbStochastic.Text = "Stochastic:";
             this.rbStochastic.UseVisualStyleBackColor = true;
@@ -177,16 +179,17 @@
             this.lStochastic.Enabled = false;
             this.lStochastic.Location = new System.Drawing.Point(117, 81);
             this.lStochastic.Name = "lStochastic";
-            this.lStochastic.Size = new System.Drawing.Size(65, 20);
+            this.lStochastic.Size = new System.Drawing.Size(69, 18);
             this.lStochastic.TabIndex = 6;
             this.lStochastic.Text = "p = 0.800";
             // 
             // rbPrudent
             // 
             this.rbPrudent.AutoSize = true;
+            this.rbPrudent.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rbPrudent.Location = new System.Drawing.Point(155, 29);
             this.rbPrudent.Name = "rbPrudent";
-            this.rbPrudent.Size = new System.Drawing.Size(73, 24);
+            this.rbPrudent.Size = new System.Drawing.Size(77, 22);
             this.rbPrudent.TabIndex = 3;
             this.rbPrudent.Text = "Prudent";
             this.rbPrudent.UseVisualStyleBackColor = true;
@@ -209,10 +212,10 @@
             // 
             this.llPlotSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.llPlotSettings.AutoSize = true;
-            this.llPlotSettings.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.llPlotSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.llPlotSettings.Location = new System.Drawing.Point(177, 518);
             this.llPlotSettings.Name = "llPlotSettings";
-            this.llPlotSettings.Size = new System.Drawing.Size(118, 20);
+            this.llPlotSettings.Size = new System.Drawing.Size(129, 18);
             this.llPlotSettings.TabIndex = 7;
             this.llPlotSettings.TabStop = true;
             this.llPlotSettings.Text = "Show plot settings";
@@ -226,7 +229,7 @@
             this.groupBox3.Controls.Add(this.tbBadCount);
             this.groupBox3.Controls.Add(this.lUserCount);
             this.groupBox3.Controls.Add(this.tbUserCount);
-            this.groupBox3.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox3.Location = new System.Drawing.Point(10, 252);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(285, 153);
@@ -240,7 +243,7 @@
             this.lBadCount.AutoSize = true;
             this.lBadCount.Location = new System.Drawing.Point(118, 82);
             this.lBadCount.Name = "lBadCount";
-            this.lBadCount.Size = new System.Drawing.Size(42, 20);
+            this.lBadCount.Size = new System.Drawing.Size(45, 18);
             this.lBadCount.TabIndex = 6;
             this.lBadCount.Text = "t = 32";
             // 
@@ -263,7 +266,7 @@
             this.lUserCount.AutoSize = true;
             this.lUserCount.Location = new System.Drawing.Point(118, 22);
             this.lUserCount.Name = "lUserCount";
-            this.lUserCount.Size = new System.Drawing.Size(46, 20);
+            this.lUserCount.Size = new System.Drawing.Size(49, 18);
             this.lUserCount.TabIndex = 6;
             this.lUserCount.Text = "n = 64";
             // 
@@ -286,7 +289,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.rbBnb);
             this.groupBox2.Controls.Add(this.rbMatrix);
-            this.groupBox2.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox2.Location = new System.Drawing.Point(10, 164);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(285, 81);
@@ -300,7 +303,7 @@
             this.rbBnb.Checked = true;
             this.rbBnb.Location = new System.Drawing.Point(12, 37);
             this.rbBnb.Name = "rbBnb";
-            this.rbBnb.Size = new System.Drawing.Size(112, 24);
+            this.rbBnb.Size = new System.Drawing.Size(119, 22);
             this.rbBnb.TabIndex = 2;
             this.rbBnb.TabStop = true;
             this.rbBnb.Text = "Balls and Bins";
@@ -311,7 +314,7 @@
             this.rbMatrix.AutoSize = true;
             this.rbMatrix.Location = new System.Drawing.Point(157, 37);
             this.rbMatrix.Name = "rbMatrix";
-            this.rbMatrix.Size = new System.Drawing.Size(62, 24);
+            this.rbMatrix.Size = new System.Drawing.Size(66, 22);
             this.rbMatrix.TabIndex = 3;
             this.rbMatrix.Text = "Matrix";
             this.rbMatrix.UseVisualStyleBackColor = true;
@@ -320,7 +323,7 @@
             // 
             this.btnStart.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnStart.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnStart.Location = new System.Drawing.Point(27, 593);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(245, 35);
@@ -335,7 +338,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox5.Controls.Add(this.lc);
             this.groupBox5.Controls.Add(this.tbC);
-            this.groupBox5.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox5.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox5.Location = new System.Drawing.Point(10, 411);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(285, 94);
@@ -349,7 +352,7 @@
             this.lc.AutoSize = true;
             this.lc.Location = new System.Drawing.Point(118, 20);
             this.lc.Name = "lc";
-            this.lc.Size = new System.Drawing.Size(39, 20);
+            this.lc.Size = new System.Drawing.Size(41, 18);
             this.lc.TabIndex = 20;
             this.lc.Text = "c = 1";
             // 
@@ -371,7 +374,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox4.Controls.Add(this.rbGridView);
             this.groupBox4.Controls.Add(this.rbPlot);
-            this.groupBox4.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox4.Location = new System.Drawing.Point(3, 3);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(266, 72);
@@ -384,7 +387,7 @@
             this.rbGridView.AutoSize = true;
             this.rbGridView.Location = new System.Drawing.Point(152, 31);
             this.rbGridView.Name = "rbGridView";
-            this.rbGridView.Size = new System.Drawing.Size(85, 24);
+            this.rbGridView.Size = new System.Drawing.Size(89, 22);
             this.rbGridView.TabIndex = 2;
             this.rbGridView.Text = "Grid View";
             this.rbGridView.UseVisualStyleBackColor = true;
@@ -394,7 +397,7 @@
             this.rbPlot.AutoSize = true;
             this.rbPlot.Location = new System.Drawing.Point(20, 31);
             this.rbPlot.Name = "rbPlot";
-            this.rbPlot.Size = new System.Drawing.Size(50, 24);
+            this.rbPlot.Size = new System.Drawing.Size(52, 22);
             this.rbPlot.TabIndex = 3;
             this.rbPlot.Text = "Plot";
             this.rbPlot.UseVisualStyleBackColor = true;
@@ -450,7 +453,7 @@
             this.groupBox6.Controls.Add(this.cbm);
             this.groupBox6.Controls.Add(this.rbMultipleRuns);
             this.groupBox6.Controls.Add(this.rbSingleRun);
-            this.groupBox6.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox6.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox6.Location = new System.Drawing.Point(7, 84);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Size = new System.Drawing.Size(262, 496);
@@ -463,7 +466,7 @@
             this.cbLogY.AutoSize = true;
             this.cbLogY.Location = new System.Drawing.Point(176, 458);
             this.cbLogY.Name = "cbLogY";
-            this.cbLogY.Size = new System.Drawing.Size(37, 24);
+            this.cbLogY.Size = new System.Drawing.Size(36, 22);
             this.cbLogY.TabIndex = 23;
             this.cbLogY.Text = "Y";
             this.cbLogY.UseVisualStyleBackColor = true;
@@ -474,7 +477,7 @@
             this.cbLogX.AutoSize = true;
             this.cbLogX.Location = new System.Drawing.Point(82, 458);
             this.cbLogX.Name = "cbLogX";
-            this.cbLogX.Size = new System.Drawing.Size(36, 24);
+            this.cbLogX.Size = new System.Drawing.Size(37, 22);
             this.cbLogX.TabIndex = 22;
             this.cbLogX.Text = "X";
             this.cbLogX.UseVisualStyleBackColor = true;
@@ -487,7 +490,7 @@
             this.label2.Enabled = false;
             this.label2.Location = new System.Drawing.Point(9, 459);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(64, 20);
+            this.label2.Size = new System.Drawing.Size(67, 18);
             this.label2.TabIndex = 21;
             this.label2.Text = "Log axis:";
             // 
@@ -496,7 +499,7 @@
             this.cboGridY.AutoSize = true;
             this.cboGridY.Location = new System.Drawing.Point(82, 430);
             this.cboGridY.Name = "cboGridY";
-            this.cboGridY.Size = new System.Drawing.Size(87, 24);
+            this.cboGridY.Size = new System.Drawing.Size(95, 22);
             this.cboGridY.TabIndex = 20;
             this.cboGridY.Text = "Horizontal";
             this.cboGridY.UseVisualStyleBackColor = true;
@@ -507,7 +510,7 @@
             this.cboGridX.AutoSize = true;
             this.cboGridX.Location = new System.Drawing.Point(176, 430);
             this.cboGridX.Name = "cboGridX";
-            this.cboGridX.Size = new System.Drawing.Size(72, 24);
+            this.cboGridX.Size = new System.Drawing.Size(75, 22);
             this.cboGridX.TabIndex = 20;
             this.cboGridX.Text = "Vertical";
             this.cboGridX.UseVisualStyleBackColor = true;
@@ -519,7 +522,7 @@
             this.lMarkerStep.AutoSize = true;
             this.lMarkerStep.Location = new System.Drawing.Point(80, 355);
             this.lMarkerStep.Name = "lMarkerStep";
-            this.lMarkerStep.Size = new System.Drawing.Size(130, 20);
+            this.lMarkerStep.Size = new System.Drawing.Size(142, 18);
             this.lMarkerStep.TabIndex = 19;
             this.lMarkerStep.Text = "Plot marker step = 1";
             // 
@@ -530,7 +533,7 @@
             this.label1.Enabled = false;
             this.label1.Location = new System.Drawing.Point(9, 431);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(38, 20);
+            this.label1.Size = new System.Drawing.Size(40, 18);
             this.label1.TabIndex = 19;
             this.label1.Text = "Grid:";
             // 
@@ -541,7 +544,7 @@
             this.lBadCountMax.Enabled = false;
             this.lBadCountMax.Location = new System.Drawing.Point(94, 290);
             this.lBadCountMax.Name = "lBadCountMax";
-            this.lBadCountMax.Size = new System.Drawing.Size(74, 20);
+            this.lBadCountMax.Size = new System.Drawing.Size(81, 18);
             this.lBadCountMax.TabIndex = 19;
             this.lBadCountMax.Text = "t_max = 32";
             // 
@@ -578,9 +581,10 @@
             this.cbmm.AutoSize = true;
             this.cbmm.Checked = true;
             this.cbmm.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbmm.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbmm.Location = new System.Drawing.Point(32, 258);
             this.cbmm.Name = "cbmm";
-            this.cbmm.Size = new System.Drawing.Size(140, 24);
+            this.cbmm.Size = new System.Drawing.Size(148, 22);
             this.cbmm.TabIndex = 12;
             this.cbmm.Text = "Total bridges used";
             this.cbmm.UseVisualStyleBackColor = true;
@@ -591,9 +595,10 @@
             this.cbTime.AutoSize = true;
             this.cbTime.Checked = true;
             this.cbTime.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbTime.Location = new System.Drawing.Point(32, 228);
             this.cbTime.Name = "cbTime";
-            this.cbTime.Size = new System.Drawing.Size(105, 24);
+            this.cbTime.Size = new System.Drawing.Size(113, 22);
             this.cbTime.TabIndex = 13;
             this.cbTime.Text = "Running time";
             this.cbTime.UseVisualStyleBackColor = true;
@@ -604,9 +609,10 @@
             this.cbN.AutoSize = true;
             this.cbN.Checked = true;
             this.cbN.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbN.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbN.Location = new System.Drawing.Point(32, 159);
             this.cbN.Name = "cbN";
-            this.cbN.Size = new System.Drawing.Size(109, 24);
+            this.cbN.Size = new System.Drawing.Size(113, 22);
             this.cbN.TabIndex = 14;
             this.cbN.Text = "Bridges used";
             this.cbN.UseVisualStyleBackColor = true;
@@ -617,9 +623,10 @@
             this.cbb.AutoSize = true;
             this.cbb.Checked = true;
             this.cbb.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbb.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbb.Location = new System.Drawing.Point(32, 129);
             this.cbb.Name = "cbb";
-            this.cbb.Size = new System.Drawing.Size(128, 24);
+            this.cbb.Size = new System.Drawing.Size(133, 22);
             this.cbb.TabIndex = 15;
             this.cbb.Text = "Blocked bridges";
             this.cbb.UseVisualStyleBackColor = true;
@@ -630,9 +637,10 @@
             this.cbThirsty.AutoSize = true;
             this.cbThirsty.Checked = true;
             this.cbThirsty.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbThirsty.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbThirsty.Location = new System.Drawing.Point(32, 69);
             this.cbThirsty.Name = "cbThirsty";
-            this.cbThirsty.Size = new System.Drawing.Size(103, 24);
+            this.cbThirsty.Size = new System.Drawing.Size(112, 22);
             this.cbThirsty.TabIndex = 16;
             this.cbThirsty.Text = "Thirsty users";
             this.cbThirsty.UseVisualStyleBackColor = true;
@@ -643,9 +651,10 @@
             this.cbm.AutoSize = true;
             this.cbm.Checked = true;
             this.cbm.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbm.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbm.Location = new System.Drawing.Point(32, 99);
             this.cbm.Name = "cbm";
-            this.cbm.Size = new System.Drawing.Size(141, 24);
+            this.cbm.Size = new System.Drawing.Size(148, 22);
             this.cbm.TabIndex = 17;
             this.cbm.Text = "Bridges distributed";
             this.cbm.UseVisualStyleBackColor = true;
@@ -654,10 +663,10 @@
             // rbMultipleRuns
             // 
             this.rbMultipleRuns.AutoSize = true;
-            this.rbMultipleRuns.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rbMultipleRuns.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rbMultipleRuns.Location = new System.Drawing.Point(11, 196);
             this.rbMultipleRuns.Name = "rbMultipleRuns";
-            this.rbMultipleRuns.Size = new System.Drawing.Size(248, 24);
+            this.rbMultipleRuns.Size = new System.Drawing.Size(269, 22);
             this.rbMultipleRuns.TabIndex = 10;
             this.rbMultipleRuns.Text = "Multiple run (variable # corrupt users)";
             this.rbMultipleRuns.UseVisualStyleBackColor = true;
@@ -666,10 +675,10 @@
             // rbSingleRun
             // 
             this.rbSingleRun.AutoSize = true;
-            this.rbSingleRun.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rbSingleRun.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rbSingleRun.Location = new System.Drawing.Point(11, 37);
             this.rbSingleRun.Name = "rbSingleRun";
-            this.rbSingleRun.Size = new System.Drawing.Size(222, 24);
+            this.rbSingleRun.Size = new System.Drawing.Size(239, 22);
             this.rbSingleRun.TabIndex = 11;
             this.rbSingleRun.Text = "Single run (fixed # corrupt users)";
             this.rbSingleRun.UseVisualStyleBackColor = true;
@@ -679,7 +688,7 @@
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSave.Location = new System.Drawing.Point(27, 593);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(227, 35);
@@ -704,23 +713,23 @@
             // 
             this.chPlots.BorderlineColor = System.Drawing.Color.Black;
             this.chPlots.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea2.AxisX.MajorGrid.LineWidth = 0;
-            chartArea2.AxisY.MajorGrid.LineWidth = 0;
-            chartArea2.Name = "ChartArea1";
-            this.chPlots.ChartAreas.Add(chartArea2);
+            chartArea1.AxisX.MajorGrid.LineWidth = 0;
+            chartArea1.AxisY.MajorGrid.LineWidth = 0;
+            chartArea1.Name = "ChartArea1";
+            this.chPlots.ChartAreas.Add(chartArea1);
             this.chPlots.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend2.Name = "Legend1";
-            this.chPlots.Legends.Add(legend2);
+            legend1.Name = "Legend1";
+            this.chPlots.Legends.Add(legend1);
             this.chPlots.Location = new System.Drawing.Point(15, 0);
             this.chPlots.Name = "chPlots";
-            series2.BorderWidth = 2;
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series2.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            series2.Legend = "Legend1";
-            series2.Name = "Series1";
-            series2.YValuesPerPoint = 6;
-            this.chPlots.Series.Add(series2);
+            series1.BorderWidth = 2;
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series1.Font = new System.Drawing.Font("Times New Roman", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            series1.YValuesPerPoint = 6;
+            this.chPlots.Series.Add(series1);
             this.chPlots.Size = new System.Drawing.Size(715, 638);
             this.chPlots.TabIndex = 18;
             this.chPlots.Text = "chart1";
@@ -732,14 +741,14 @@
             this.dgvStats.AllowUserToDeleteRows = false;
             this.dgvStats.AllowUserToResizeRows = false;
             this.dgvStats.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Helvetica", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvStats.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvStats.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvStats.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvStats.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.col_i,
@@ -752,12 +761,12 @@
             this.col_th});
             this.dgvStats.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvStats.EnableHeadersVisualStyles = false;
-            this.dgvStats.Font = new System.Drawing.Font("Helvetica", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dgvStats.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dgvStats.Location = new System.Drawing.Point(15, 0);
             this.dgvStats.Name = "dgvStats";
             this.dgvStats.ReadOnly = true;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.dgvStats.RowsDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.dgvStats.RowsDefaultCellStyle = dataGridViewCellStyle2;
             this.dgvStats.RowTemplate.Height = 25;
             this.dgvStats.RowTemplate.ReadOnly = true;
             this.dgvStats.Size = new System.Drawing.Size(715, 638);
@@ -839,7 +848,7 @@
             // btnCollapseRight
             // 
             this.btnCollapseRight.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnCollapseRight.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCollapseRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCollapseRight.Location = new System.Drawing.Point(0, 0);
             this.btnCollapseRight.Name = "btnCollapseRight";
             this.btnCollapseRight.Size = new System.Drawing.Size(15, 638);
@@ -861,7 +870,7 @@
             // btnCollapseLeft
             // 
             this.btnCollapseLeft.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnCollapseLeft.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCollapseLeft.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCollapseLeft.Location = new System.Drawing.Point(0, 0);
             this.btnCollapseLeft.Name = "btnCollapseLeft";
             this.btnCollapseLeft.Size = new System.Drawing.Size(15, 638);
@@ -873,7 +882,7 @@
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1329, 638);
             this.Controls.Add(this.pOutputPanel);
@@ -881,7 +890,7 @@
             this.Controls.Add(this.pRightPanel);
             this.Controls.Add(this.splitterLeft);
             this.Controls.Add(this.pLeftPanel);
-            this.Font = new System.Drawing.Font("Helvetica", 10.86792F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.86792F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.MinimumSize = new System.Drawing.Size(100, 50);
             this.Name = "MainForm";
