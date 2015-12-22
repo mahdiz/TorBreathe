@@ -18,7 +18,9 @@ namespace BridgeDistribution
 {
 	public partial class MainForm : Form
 	{
-        private int defaultN = 4096;         // default number of users (must be >= 4)
+        private const int defaultN = 4096;         // default number of users (must be >= 4)
+        private const int plotMarkerSize = 15;
+        private const int plotThickness = 6;
         private bool stopped = true;
         private bool stopRequest, exitRequest;
         private bool logIncConsidered;
@@ -26,7 +28,7 @@ namespace BridgeDistribution
         private int blockedSoFar;
         private RunLog runLog;
         private Font plotScreenFont = new Font("Arial", 12F, FontStyle.Regular);
-        private Font plotSaveFont = new Font("Times New Roman", 20F, FontStyle.Regular);
+        private Font plotSaveFont = new Font("Arial", 24F, FontStyle.Regular);
 
 		public MainForm()
 		{
@@ -41,7 +43,8 @@ namespace BridgeDistribution
             rbPlot.Checked = true;
             cboGridX.Checked = true;
             cboGridY.Checked = true;
-            btnCollapseRight_Click(sender, e);
+            rbLegendLeft.Checked = true;
+            //btnCollapseRight_Click(sender, e);
         }
 
         private void btnStart_Click(object sender, EventArgs e)
@@ -70,16 +73,27 @@ namespace BridgeDistribution
                 chPlots.ChartAreas[0].AxisY.MajorGrid.LineColor = Color.LightGray;
                 chPlots.ChartAreas[0].AxisX.LabelStyle.Font = plotScreenFont;
                 chPlots.ChartAreas[0].AxisY.LabelStyle.Font = plotScreenFont;
+                chPlots.ChartAreas[0].AxisX.TitleFont = plotScreenFont;
+                chPlots.ChartAreas[0].AxisY.TitleFont = plotScreenFont;
                 chPlots.Legends[0].Font = plotScreenFont;
+                chPlots.Legends[0].IsDockedInsideChartArea = true;
+                chPlots.ApplyPaletteColors();
 
-                int j = 1;
                 foreach (var series in chPlots.Series)
                 {
-                    series.BorderWidth = 3;
+                    series.BorderWidth = plotThickness;
                     series.ChartType = SeriesChartType.Line;
-                    series.MarkerStyle = MarkerStyle.None + j++;
-                    series.MarkerSize = 12;
+                    series.MarkerSize = plotMarkerSize;
                 }
+                chPlots.Series[0].MarkerStyle = MarkerStyle.Square;
+                chPlots.Series[1].MarkerStyle = MarkerStyle.Triangle;
+                chPlots.Series[2].MarkerStyle = MarkerStyle.Diamond;
+                chPlots.Series[3].MarkerStyle = MarkerStyle.Circle;
+
+                chPlots.Series[4].Color = chPlots.Series[2].Color;
+                chPlots.Series[4].MarkerStyle = MarkerStyle.Circle;
+                chPlots.Series[5].Color = chPlots.Series[3].Color;
+                chPlots.Series[5].MarkerStyle = MarkerStyle.Square;
                 UpdatePlots();
 
                 int n = (int)Math.Pow(2, tbUserCount.Value);
@@ -119,6 +133,8 @@ namespace BridgeDistribution
                     }
                 }
             }
+            else stopRequest = true;
+
             btnStart.Text = "Start";
             stopped = true;
 
@@ -221,6 +237,23 @@ namespace BridgeDistribution
 
                 chPlots.ChartAreas[0].AxisX.IsLogarithmic = cbLogX.Checked;
                 chPlots.ChartAreas[0].AxisY.IsLogarithmic = cbLogY.Checked;
+                chPlots.Legends[0].Enabled = cbLegend.Checked;
+
+                chPlots.Legends[0].Docking = rbLegendLeft.Checked ? Docking.Left : 
+                    rbLegendRight.Checked ? Docking.Right : rbLegendTop.Checked ? Docking.Top : Docking.Bottom;
+
+                if (rbSingleRun.Checked)
+                    chPlots.ChartAreas[0].AxisX.Title = "Round";
+                else
+                {
+                    chPlots.ChartAreas[0].AxisX.Title = "Number of corrupt users";
+                    if (cbTime.Checked && !cbmm.Checked)
+                        chPlots.ChartAreas[0].AxisY.Title = "Running time";
+                    else if (!cbTime.Checked && cbmm.Checked)
+                        chPlots.ChartAreas[0].AxisY.Title = "Number of bridges used";
+                    else
+                        chPlots.ChartAreas[0].AxisY.Title = "";
+                }
 
                 chPlots.ChartAreas[0].RecalculateAxesScale();
             }
@@ -327,13 +360,18 @@ namespace BridgeDistribution
                 chPlots.BorderlineDashStyle = ChartDashStyle.NotSet;
                 chPlots.ChartAreas[0].AxisX.LabelStyle.Font = plotSaveFont;
                 chPlots.ChartAreas[0].AxisY.LabelStyle.Font = plotSaveFont;
+                chPlots.ChartAreas[0].AxisX.TitleFont = plotSaveFont;
+                chPlots.ChartAreas[0].AxisY.TitleFont = plotSaveFont;
                 chPlots.Legends[0].Font = plotSaveFont;
+                chPlots.Legends[0].BackColor = Color.FromArgb(0, 0, 0, 0);
 
                 chPlots.SaveImage(saveDialog.FileName, format);
 
                 chPlots.BorderlineDashStyle = ChartDashStyle.Solid;
                 chPlots.ChartAreas[0].AxisX.LabelStyle.Font = plotScreenFont;
                 chPlots.ChartAreas[0].AxisY.LabelStyle.Font = plotScreenFont;
+                chPlots.ChartAreas[0].AxisX.TitleFont = plotScreenFont;
+                chPlots.ChartAreas[0].AxisY.TitleFont = plotScreenFont;
                 chPlots.Legends[0].Font = plotScreenFont;
             }
         }
@@ -361,6 +399,29 @@ namespace BridgeDistribution
         private void rbStochastic_CheckedChanged(object sender, EventArgs e)
         {
             tbStochastic.Enabled = lStochastic.Enabled = rbStochastic.Checked;
+        }
+
+        private void MainForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F2)
+                btnSave_Click(sender, e);
+        }
+
+        private void cbLegend_CheckedChanged(object sender, EventArgs e)
+        {
+            rbLegendLeft.Enabled = rbLegendRight.Enabled = rbLegendTop.Enabled = rbLegendBottom.Enabled = cbLegend.Checked;
+            UpdatePlots();
+        }
+
+        private void chPlots_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left && e.X > 0 && e.Y > 0 && 
+                e.X < chPlots.Width - chPlots.Legends[0].Position.Width - 200 && 
+                e.Y < chPlots.Height - chPlots.Legends[0].Position.Height - 100)
+            {
+                chPlots.Legends[0].Position.X = (int)((double)e.X / chPlots.Width * 100.0);
+                chPlots.Legends[0].Position.Y = (int)((double)e.Y / chPlots.Height * 100.0);
+            }
         }
 
         private void cbLogY_CheckedChanged(object sender, EventArgs e)

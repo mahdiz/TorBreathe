@@ -69,7 +69,7 @@ namespace BridgeDistribution
         /// <summary>
         /// Runs the bridge distribution algorithm.
         /// </summary>
-        /// <param name="c">Repeats the distribute method c*Log(n) times. If c=0, then repeat only once.</param>
+        /// <param name="c">Repeats the distribute method c*Log(n) times. If c=0, then repeats the method only once.</param>
         public void Run(int c)
         {
             var repeatCount = c == 0 ? 1 : c * (int)Math.Ceiling(Math.Log(Users.Count, 2));
@@ -103,7 +103,11 @@ namespace BridgeDistribution
                         {
                             Debug.Assert(!bridges[j].Any(x => x.IsBlocked), "Distribute a blocked bridge??");
 
-                            RecruitExtend(bridges[j], m);
+                            // Increased the number of unblocked bridges to m for each repeat
+                            var extraCount = m - bridges[j].Count;
+                            for (int k = 0; k < extraCount; k++)
+                                bridges[j].Add(new Bridge());
+
                             Distribute(bridges[j]);
                         }
                     }
@@ -127,6 +131,10 @@ namespace BridgeDistribution
 			}
 		}
 
+
+        /// <summary>
+        /// Replaces blocked bridges with fresh ones in the input list of bridges.
+        /// </summary>
         private static int RecruitReplace(List<Bridge> bridges)
         {
             // Replace blocked bridges with fresh ones in all repeats
@@ -140,14 +148,6 @@ namespace BridgeDistribution
                 }
             }
             return blockedCount;
-        }
-
-        private static void RecruitExtend(List<Bridge> bridges, int m)
-        {
-            // Recruit a sufficient number of unblocked bridges to have m of them
-            var extraCount = m - bridges.Count;
-            for (int i = 0; i < extraCount; i++)
-                bridges.Add(new Bridge());
         }
 
         private void DistributeBnB(List<Bridge> B)
