@@ -73,9 +73,7 @@ namespace BridgeDistribution
         public void Run(int c)
         {
             var repeatCount = c == 0 ? 1 : c * (int)Math.Ceiling(Math.Log(Users.Count, 2));
-
 			var bridges = new List<Bridge>[repeatCount];    // List of bridges distributed in each repeat
-            int[] blockedCount;        // # of blocked bridges in each repeat
 
             for (int j = 0; j < repeatCount; j++)
                 bridges[j] = new List<Bridge>();
@@ -86,10 +84,11 @@ namespace BridgeDistribution
 
 			while (!stopped & !stable)
 			{
-                blockedCount = bridges.Select(b => RecruitReplace(b)).ToArray();
+                // Calculate # of blocked bridges in each repeat and replace them with new bridges
+                var blockedCounts = bridges.Select(b => RecruitReplace(b));
 
                 // Go to next round if in any of the repeats the number blocked bridges is >= the threshold
-                if (i == 0 || blockedCount.Any(b => b >= threshold(i)))
+                if (i == 0 || blockedCounts.Any(b => b >= threshold(i)))
                 {
                     i = i + 1;
 
@@ -101,7 +100,7 @@ namespace BridgeDistribution
                     {
                         for (int j = 0; j < repeatCount; j++)
                         {
-                            Debug.Assert(!bridges[j].Any(x => x.IsBlocked), "Distribute a blocked bridge??");
+                            Debug.Assert(!bridges[j].Any(x => x.IsBlocked), "Can't distribute a blocked bridge.");
 
                             // Increased the number of unblocked bridges to m for each repeat
                             var extraCount = m - bridges[j].Count;

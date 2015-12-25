@@ -20,7 +20,7 @@ namespace BridgeDistribution
 
 		public void Block()
 		{
-			//Debug.WriteLineIf(IsBlocked == true, "The bridge is already blocked.");
+			//Debug.Assert(IsBlocked, "The bridge is already blocked.");
 			IsBlocked = true;
 		}
 
