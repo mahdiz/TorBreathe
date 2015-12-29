@@ -41,25 +41,15 @@ namespace BridgeDistribution
         /// </summary>
         public int ThirstyCount { get; private set; }
 
-        public RoundLog(int round, UserList users, List<Bridge>[] bridges)
+        public RoundLog(int round, List<User> users, List<Bridge> bridges)
         {
             Round = round;
             UsersCount = users.Count;
             CorruptsCount = users.Count(u => u is CorruptUser);
 
-            var m = 0;
-            var b = 0;
-
-            var repeatCount = bridges.Length;
-            for (int j = 0; j < repeatCount; j++)
-            {
-                m += bridges[j].Count;
-                b += bridges[j].Count(x => x.IsBlocked);
-            }
-            
-            BridgeCount = m;
-            BlockedCount = b;
-            ThirstyCount = users.ThirstyUsers.Where(u => !(u is CorruptUser)).Count();
+            BridgeCount = bridges.Count;
+            BlockedCount = bridges.Count(x => x.IsBlocked);
+            ThirstyCount = users.Where(u => u.IsThirsty && !(u is CorruptUser)).Count();
         }
 
         public override string ToString()

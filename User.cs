@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SecretSharing;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,35 +7,75 @@ using System.Threading.Tasks;
 
 namespace BridgeDistribution
 {
-	public class User
+	public class User : Node
 	{
-		private static int idGen;
+        public List<Bridge> Bridges = new List<Bridge>();
+        //{
+        //    get
+        //    {
+        //        var bridges = new List<Bridge>();
+        //        foreach (var bi in BridgeShares)
+        //            bridges.Add(Simulator.Bridges[bi]);
 
-		public int Id { get; private set; }
-		public HashSet<Bridge> Bridges;
+        //        return bridges;
+        //    }
+        //}
 
-		public bool IsThirsty
-		{
-			get
-			{
-				return Bridges.All(b => b.IsBlocked);
-			}
-		}
-
-		public User()
-		{
-			Id = idGen++;
-			Bridges = new HashSet<Bridge>(new BridgeComparer());
-		}
-
-        public override string ToString()
+        public bool IsThirsty
         {
-            return Id.ToString();
+            get { return Bridges.All(b => b.IsBlocked); }
         }
 
-        public static void Reset()
+        private Dictionary<long, List<Zp>> BridgeShares = new Dictionary<long, List<Zp>>();
+        private List<int> distributorIds;
+
+        public User(List<int> distributorIds)
         {
-            idGen = 0;
+            this.distributorIds = distributorIds;
+            this.distributorIds.ForEach(d => Send(d, Id, MessageType.UserJoin));
         }
-	}
+
+        public void Leave()
+        {
+            // Let all distributors know that I have leaved the protocol
+            distributorIds.ForEach(d => Send(d, Id, MessageType.UserLeave));
+        }
+
+        //public override void Receive<BrideAssignment>(int fromNode, BrideAssignment message, MessageType type)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        public override void Receive(int fromNode, object message, MessageType type)
+        {
+            if (type == MessageType.BridgeAssign)   // From a distributor: Here's a bridge id share for you.
+            {
+                int bridgeId = -1;
+                var ba = message as BridgeAssignMessage;
+
+                if (distributorIds.Count == 1)
+                    bridgeId = ba.BridgeShare.Value;
+                else
+                {
+                    if (!BridgeShares.ContainsKey(ba.BridgePseudonym))
+                        BridgeShares[ba.BridgePseudonym] = new List<Zp>();
+
+                    BridgeShares[ba.BridgePseudonym].Add(ba.BridgeShare);
+
+                    if (BridgeShares[ba.BridgePseudonym].Count == distributorIds.Count)
+                    {
+                        bridgeId = ShamirSharing.SimpleRecombine(BridgeShares[ba.BridgePseudonym],
+                            Simulator.PolynomialDegree, Simulator.Prime).Value;
+
+                        BridgeShares[ba.BridgePseudonym] = null;
+                    }
+                }
+
+                if (bridgeId >= 0)
+                    Bridges.Add(Simulator.Bridges[bridgeId]);
+            }
+            else
+                throw new Exception("Invalid message received.");
+        }
+    }
 }

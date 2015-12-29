@@ -13,7 +13,6 @@ namespace BridgeDistribution
         public int RoundsCount { get { return roundsLog.Count; } }
 
         private List<RoundLog> roundsLog = new List<RoundLog>();
-        private int blockedSoFar;
 
         public void Add(RoundLog log)
         {

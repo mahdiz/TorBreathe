@@ -14,9 +14,13 @@ namespace BridgeDistribution
         Stochastic
 	}
 
-	internal class CorruptUser : User
+    internal class CorruptUser : User
 	{
-	}
+        public CorruptUser(List<int> distributors)
+            : base(distributors)
+        {
+        }
+    }
 
     internal class Censor
     {
@@ -24,36 +28,25 @@ namespace BridgeDistribution
         public double BlockingProbability { get; set; }
         private Random randGen;
 
-        public int MemorizedCount
-        {
-            get
-            {
-                int mem = 0;
-                CorruptUsers.ForEach(u => mem += u.Bridges.Count(b => !b.IsBlocked));
-                return mem;
-            }
-        }
-
-		private Distributor d;
+		private List<Distributor> distributors;
 		private List<CorruptUser> CorruptUsers = new List<CorruptUser>();
-        //private HashSet<Bridge> MemorizedBridges = new HashSet<Bridge>(new BridgeComparer());
 
-		public Censor(Distributor d, AttackModel attackModel, double blockProbability, int seed)
+		public Censor(List<Distributor> distributors, AttackModel attackModel, double blockProbability, int seed)
 		{
-			this.d = d;
+			this.distributors = distributors;
 			AttackModel = attackModel;
             BlockingProbability = blockProbability;
-            d.OnYield += OnDistYield;
+            (distributors[0] as LeaderDistributor).OnYield += OnDistYield;
             randGen = new Random(seed);     // The seed must be different from distributor's RNG seed
 		}
 
 		public void AddCorruptUsers(int n)
 		{
-			for (int i = 0; i < n; i++)
+            var distIds = distributors.Select(d => d.Id).ToList();
+            for (int i = 0; i < n; i++)
 			{
-				var u = new CorruptUser();
+				var u = new CorruptUser(distIds);
 				CorruptUsers.Add(u);
-				d.Join(u);
 			}
 		}
 

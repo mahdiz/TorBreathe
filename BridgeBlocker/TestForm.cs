@@ -19,12 +19,12 @@ namespace BridgeDistribution
 	public partial class MainForm : Form
 	{
         private const int defaultN = 4096;         // default number of users (must be >= 4)
+        private const int numDistributors = 6;
         private const int plotMarkerSize = 15;
         private const int plotThickness = 6;
         private bool stopped = true;
         private bool stopRequest, exitRequest;
         private bool logIncConsidered;
-        private Censor censor;
         private int blockedSoFar;
         private RunLog runLog;
         private Font plotScreenFont = new Font("Arial", 12F, FontStyle.Regular);
@@ -58,8 +58,7 @@ namespace BridgeDistribution
                 btnStart.Text = "Stop";
                 cbLogY.Enabled = false;
                 blockedSoFar = 0;
-                User.Reset();
-                Bridge.Reset();
+                Simulator.Reset();
                 Application.DoEvents();
 
                 // Set up plots
@@ -101,11 +100,21 @@ namespace BridgeDistribution
 
                 for (int t = tbBadCount.Value; t < t_max && !stopRequest; t++)
                 {
-                    var d = new Distributor(rbBnb.Checked ? DistributeAlgorithm.BallsAndBins : DistributeAlgorithm.Matrix, 123);
+                    // Create the distributors
+                    var dists = new List<Distributor>();
+
+                    for (int i = 1; i < numDistributors; i++)
+                        dists.Add(new Distributor());
+
+                    var leader = new LeaderDistributor(dists.Select(d => d.Id).ToList(),
+                        rbBnb.Checked ? DistributeAlgorithm.BallsAndBins : DistributeAlgorithm.Matrix, 123);
+                    dists.Insert(0, leader);
+
+                    var distIds = dists.Select(d => d.Id).ToList();
 
                     // Add honest users
                     for (int i = 0; i < n - t; i++)
-                        d.Join(new User());
+                        new User(distIds);
 
                     // Add corrupt users
                     var attackModel = AttackModel.Aggressive;
@@ -114,12 +123,17 @@ namespace BridgeDistribution
                     else if (rbStochastic.Checked)
                         attackModel = AttackModel.Stochastic;
 
-                    censor = new Censor(d, attackModel, tbStochastic.Value / 40.0, 456);
+                    var censor = new Censor(dists, attackModel, tbStochastic.Value / 40.0, 456);
                     censor.AddCorruptUsers(t);
 
+                    // Create a sufficient number of bridges
+                    var bridges = new List<Bridge>();
+                    for (int i = 0; i < t * Math.Log(t, 2); i++)
+                        bridges.Add(new Bridge(distIds));
+
                     runLog = new RunLog();
-                    d.OnRoundEnd += OnRoundEnd;
-                    d.Run(tbC.Value);
+                    leader.OnRoundEnd += OnRoundEnd;
+                    leader.Run(tbC.Value);
 
                     logIncConsidered = cbLogY.Checked;
                     cbLogY.Enabled = true;
@@ -142,9 +156,14 @@ namespace BridgeDistribution
                 Close();
         }
 
-        private bool OnRoundEnd(int round, UserList users, List<Bridge>[] bridges)
+        private bool OnRoundEnd(int round, List<int>[] bridgeIds)
         {
-            var log = new RoundLog(round, users, bridges);
+            var bridges = new List<Bridge>();
+            foreach (var bis in bridgeIds)
+                foreach (var bi in bis)
+                    bridges.Add(Simulator.Bridges[bi]);
+
+            var log = new RoundLog(round, Simulator.Users.Values.ToList(), bridges);
             runLog.Add(log);
 
             int N = blockedSoFar + log.BridgeCount;
@@ -152,7 +171,7 @@ namespace BridgeDistribution
 
             // Add one new row to the grid view
             dgvStats.Rows.Add(new string[] {
-                round.ToString(), log.UsersCount.ToString(), log.CorruptsCount.ToString(), (log.BridgeCount / bridges.Length).ToString(), 
+                round.ToString(), log.UsersCount.ToString(), log.CorruptsCount.ToString(), (log.BridgeCount / bridgeIds.Length).ToString(), 
                 log.BridgeCount.ToString(), log.BlockedCount.ToString(), N.ToString(), 
                 log.ThirstyCount.ToString(),
             });

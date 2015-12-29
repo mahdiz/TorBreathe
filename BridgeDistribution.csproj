@@ -45,11 +45,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bridge.cs" />
-    <Compile Include="BridgeComparer.cs" />
     <Compile Include="Distributor.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="Node.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Simulator.cs" />
     <Compile Include="User.cs" />
-    <Compile Include="UserList.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="SecretSharing\SecretSharing.csproj">
+      <Project>{5949918c-804b-42e3-94a4-88a3b5576b97}</Project>
+      <Name>SecretSharing</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SecretSharing;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,21 +10,89 @@ using System.Threading.Tasks;
 namespace BridgeDistribution
 {
 	public delegate void YieldHandler(int threshold, int repeatCount);
-	public delegate bool RoundEndHandler(int round, UserList users, List<Bridge>[] bridges);
-    public delegate void Distribute(List<Bridge> B);
+	public delegate bool RoundEndHandler(int round, List<int>[] bridges);
+    public delegate void Distribute(List<long> bridges);
 
-    public enum DistributeAlgorithm
+    public class BridgeShare
     {
-        BallsAndBins,
-        Matrix,
+        public readonly Zp Share;
+        public bool IsBlocked;
+
+        public BridgeShare(Zp share)
+        {
+            Share = share;
+        }
     }
 
-	public class Distributor
+    public class UserAssignMessage
+    {
+
+        public readonly int UserId;
+        public readonly long BridgePseudonym;
+
+        public UserAssignMessage(int userId, long bridgePseudonym)
+        {
+            UserId = userId;
+            BridgePseudonym = bridgePseudonym;
+        }
+    }
+
+    public class BridgeAssignMessage
+    {
+        public readonly long BridgePseudonym;
+        public readonly Zp BridgeShare;
+
+        public BridgeAssignMessage(long bridgePseudonym, Zp bridgeShare)
+        {
+            BridgePseudonym = bridgePseudonym;
+            BridgeShare = bridgeShare;
+        }
+    }
+
+    public class Distributor : Node
+    {
+        protected List<int> Users = new List<int>();
+        protected Dictionary<long, BridgeShare> BridgeShares = new Dictionary<long, BridgeShare>();
+
+        public override void Receive(int fromNode, object message, MessageType type)
+        {
+            switch (type)
+            {
+                case MessageType.BridgeJoin:    // From a bridge: I'm joining the protocol.
+                    var bj = message as BridgeJoinMessage;
+                    BridgeShares[bj.Pseudonym] = new BridgeShare(bj.IdShare);
+                    break;
+
+                case MessageType.UserAssign:    // From the leader: Send the bridge to the user.
+                    var ba = message as UserAssignMessage;
+                    Send(ba.UserId, 
+                         new BridgeAssignMessage(ba.BridgePseudonym, BridgeShares[ba.BridgePseudonym].Share), 
+                         MessageType.BridgeAssign);
+                    break;
+
+                case MessageType.UserJoin:      // From a user: I'm joining the protocol.
+                    Users.Add((int)message);
+                    break;
+
+                case MessageType.UserLeave:     // From a user: I'm leaving the protocol.
+                    Debug.Assert(Users.Remove((int)message), "User not found.");
+                    break;
+
+                case MessageType.BridgeBlocked:     // From bridge: I'm blocked.
+                    BridgeShares[(long)message].IsBlocked = true;
+                    break;
+
+                default:
+                    throw new Exception("Invalid message received.");
+            }
+        }
+    }
+
+	public class LeaderDistributor : Distributor
 	{
         public DistributeAlgorithm Algorithm { get; private set; }
 		public event YieldHandler OnYield;
         public event RoundEndHandler OnRoundEnd;
-        public UserList Users { get; private set; }
 
         /// <summary>
         /// The distribution method
@@ -31,6 +100,7 @@ namespace BridgeDistribution
         public Distribute Distribute;
 
         private Random randGen;
+        private List<int> distributorIds;
 
         /// <summary>
         /// A function that calculates the round threshold for the number of bridges blocked in each round.
@@ -42,10 +112,10 @@ namespace BridgeDistribution
         /// </summary>
         private Func<int, int> distCount;
 
-		public Distributor(DistributeAlgorithm method, int seed)
+		public LeaderDistributor(List<int> distributorIds, DistributeAlgorithm method, int seed)
 		{
-			randGen = new Random(seed);
-			Users = new UserList();
+			this.randGen = new Random(seed);
+            this.distributorIds = distributorIds;
             
             switch (Algorithm = method)
             {
@@ -73,10 +143,10 @@ namespace BridgeDistribution
         public void Run(int c)
         {
             var repeatCount = c == 0 ? 1 : c * (int)Math.Ceiling(Math.Log(Users.Count, 2));
-			var bridges = new List<Bridge>[repeatCount];    // List of bridges distributed in each repeat
+			var bridges = new List<int>[repeatCount];    // List of bridges distributed in each repeat
 
             for (int j = 0; j < repeatCount; j++)
-                bridges[j] = new List<Bridge>();
+                bridges[j] = new List<int>();
 
             int i = 0;              // Round number
             int n = Users.Count;    // Number of users
@@ -84,37 +154,46 @@ namespace BridgeDistribution
 
 			while (!stopped & !stable)
 			{
-                // Calculate # of blocked bridges in each repeat and replace them with new bridges
-                var blockedCounts = bridges.Select(b => RecruitReplace(b));
-
+                // Calculate # of blocked bridges in each repeat and remove them from the list
                 // Go to next round if in any of the repeats the number blocked bridges is >= the threshold
-                if (i == 0 || blockedCounts.Any(b => b >= threshold(i)))
+                bool nextRound = false;
+                int j = 0, blockedCounts = 0, m = distCount(i);
+                foreach (var bridgeShare in BridgeShares)
+                {
+                    if (bridgeShare.Value.IsBlocked)
+                    {
+                        if (++blockedCounts > threshold(i))
+                        {
+                            nextRound = true;
+                            break;
+                        }
+                    }
+                    if (++j >= m)
+                        j = blockedCounts = 0;      // reached bridges of next repeat
+                }
+                
+                if (i == 0 || nextRound)
                 {
                     i = i + 1;
 
                     // Update the parameters
                     n = Users.Count;
-                    int m = distCount(i);       // Number of bridges distributed in current round (same for all repeats)
+                    m = distCount(i);       // Number of bridges distributed in current round (same for all repeats)
 
                     if (m * repeatCount < n)
                     {
-                        for (int j = 0; j < repeatCount; j++)
-                        {
-                            Debug.Assert(!bridges[j].Any(x => x.IsBlocked), "Can't distribute a blocked bridge.");
-
-                            // Increased the number of unblocked bridges to m for each repeat
-                            var extraCount = m - bridges[j].Count;
-                            for (int k = 0; k < extraCount; k++)
-                                bridges[j].Add(new Bridge());
-
-                            Distribute(bridges[j]);
-                        }
+                        for (j = 0; j < repeatCount; j++)
+                            Distribute(BridgeShares.Keys.ToList().GetRange(j * m, m));  // TODO: Speed improvement. Give start end rather than copying to sublists.
                     }
                     else
                     {
                         // Give each user a fresh bridge that has never been assigned to any user
+                        var e = BridgeShares.Keys.GetEnumerator();
                         foreach (var user in Users)
-                            user.Bridges.Add(new Bridge());
+                        {
+                            e.MoveNext();
+                            Assign(user, e.Current);
+                        }
                         stable = true;
                     }
 
@@ -124,46 +203,55 @@ namespace BridgeDistribution
 
                     // Log the end of round
                     if (OnRoundEnd != null)
-                        stopped = OnRoundEnd(i, Users, bridges);
+                        stopped = OnRoundEnd(i, bridges);
                 }
                 else stable = true;
 			}
 		}
 
-
-        /// <summary>
-        /// Replaces blocked bridges with fresh ones in the input list of bridges.
-        /// </summary>
-        private static int RecruitReplace(List<Bridge> bridges)
+        private void Assign(int userId, long bridgePseudonym)
         {
-            // Replace blocked bridges with fresh ones in all repeats
-            int blockedCount = 0;
-            for (int i = 0; i < bridges.Count; i++)
-            {
-                if (bridges[i].IsBlocked)
-                {
-                    blockedCount++;
-                    bridges[i] = new Bridge();
-                }
-            }
-            return blockedCount;
+            // Tell other distributors to send their own bridge shares to the user
+            var ba = new UserAssignMessage(userId, bridgePseudonym);
+            distributorIds.ForEach(d => Send(d, ba, MessageType.UserAssign));
+
+            // Send my bridge share to the user as well
+            Send(userId, BridgeShares[bridgePseudonym], MessageType.BridgeAssign);
         }
 
-        private void DistributeBnB(List<Bridge> B)
+        ///// <summary>
+        ///// Replaces blocked bridges with fresh ones in the input list of bridges.
+        ///// </summary>
+        //private static int RecruitReplace(List<int> bridges)
+        //{
+        //    // Replace blocked bridges with fresh ones in all repeats
+        //    int blockedCount = 0;
+        //    for (int i = 0; i < bridges.Count; i++)
+        //    {
+        //        if (bridges[i].IsBlocked)
+        //        {
+        //            blockedCount++;
+        //            bridges[i] = new Bridge();
+        //        }
+        //    }
+        //    return blockedCount;
+        //}
+
+        private void DistributeBnB(List<long> bridges)
         {
-            int m = B.Count;
+            int m = bridges.Count;
             foreach (var user in Users)
             {
                 var k = randGen.Next(0, m);
-                user.Bridges.Add(B[k]);
+                Assign(user, bridges[k]);
             }
         }
 
-		private void DistributeMatrix(List<Bridge> B)
+		private void DistributeMatrix(List<long> bridges)
 		{
 			// Create a matrix with floor(m) columns and ceiling(n/m) rows
 			int n = Users.Count;
-            int m = B.Count;
+            int m = bridges.Count;
             int r = (int)Math.Ceiling((double)n / m);
 
             var users = Shuffle(Users);
@@ -172,20 +260,9 @@ namespace BridgeDistribution
 				for (int j = 0; j < m; j++)
 				{
 					// the user in the i-th row of the j-th column
-					if (j * r + i < n)
-						users[j * r + i].Bridges.Add(B[j]);
+						Assign(users[j * r + i], bridges[j]);
 				}
 			}
-		}
-
-		public void Join(User u)
-		{
-			Users.Add(u);
-		}
-
-		public void Leave(User u)
-		{
-			Users.Remove(u);
 		}
 
         /// <summary>
@@ -206,5 +283,10 @@ namespace BridgeDistribution
 			}
             return array;
 		}
-	}
+
+        public override void Receive(int fromNode, object message, MessageType type)
+        {
+            base.Receive(fromNode, message, type);
+        }
+    }
 }
