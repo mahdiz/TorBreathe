@@ -64,6 +64,10 @@
       <Project>{bce8f776-516e-453d-92bc-9c11f4e83e29}</Project>
       <Name>BridgeDistribution</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SecretSharing\SecretSharing.csproj">
+      <Project>{5949918c-804b-42e3-94a4-88a3b5576b97}</Project>
+      <Name>SecretSharing</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TestForm.resx">

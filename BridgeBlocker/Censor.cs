@@ -40,10 +40,10 @@ namespace BridgeDistribution
             randGen = new Random(seed);     // The seed must be different from distributor's RNG seed
 		}
 
-		public void AddCorruptUsers(int n)
+		public void AddCorruptUsers(int t)
 		{
             var distIds = distributors.Select(d => d.Id).ToList();
-            for (int i = 0; i < n; i++)
+            for (int i = 0; i < t; i++)
 			{
 				var u = new CorruptUser(distIds);
 				CorruptUsers.Add(u);

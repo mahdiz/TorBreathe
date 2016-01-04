@@ -96,24 +96,9 @@ namespace SecretSharing
 			return true;
 		}
 
-		/// <summary>
-		/// Returns an array containing inverses of all field elements.
-		/// </summary>
-		public static int[] GetFieldInverse(int prime)
+		public static int GetFieldMinimumPrimitive(long prime)
 		{
-			int x, y;
-			var invArr = new int[prime];
-			for (int i = 0; i < prime; i++)
-			{
-				ExtendedEuclidean(i, prime, out x, out y);
-				invArr[i] = x < 0 ? x + prime : x;
-			}
-			return invArr;
-		}
-
-		public static int GetFieldMinimumPrimitive(int prime)
-		{
-			int w_i;
+			long w_i;
 			bool cond;
 			var fieldElements = new bool[prime];
 
@@ -146,9 +131,9 @@ namespace SecretSharing
 		/// <summary>
 		/// Performs modular exponentiation.
 		/// </summary>
-		public static int ModPow(int powerBase, int exp, int prime)
+		public static long ModPow(long powerBase, int exp, long prime)
 		{
-			int p = 1;
+			long p = 1;
 			for (int i = 0; i < exp; i++)
 			{
 				var v = (powerBase * p) % prime;

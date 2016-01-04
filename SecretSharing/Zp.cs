@@ -9,10 +9,10 @@ namespace SecretSharing
     /// </summary>
     public class Zp
 	{
-		private int num;
-		public readonly int Prime;
+		private long num;
+		public readonly long Prime;
 
-		public int Value
+		public long Value
 		{
 			get
 			{
@@ -44,13 +44,13 @@ namespace SecretSharing
 			}
 		}
 
-		public Zp(int prime, int num)
+		public Zp(long prime, long num)
 		{
 			this.Prime = prime;
 			this.num = Modulo(num, prime);
 		}
 
-		public Zp(int prime)
+		public Zp(long prime)
 		{
 			this.Prime = prime;
 		}
@@ -85,7 +85,7 @@ namespace SecretSharing
 			return zp1 * zp2.MultipInverse;
 		}
 
-		public static Zp operator +(Zp zp1, int i)
+		public static Zp operator +(Zp zp1, long i)
 		{
 			return new Zp(zp1.Prime, zp1.num + i);
 		}
@@ -96,12 +96,12 @@ namespace SecretSharing
 			return zp1;
 		}
 
-		public static bool operator <(Zp zp1, int i)
+		public static bool operator <(Zp zp1, long i)
 		{
 			return zp1.num < i;
 		}
 
-		public static bool operator >(Zp zp1, int i)
+		public static bool operator >(Zp zp1, long i)
 		{
 			return zp1.num > i;
 		}
@@ -202,12 +202,12 @@ namespace SecretSharing
 			}
 		}
 
-		public int Modulo(int i)
+		public long Modulo(long i)
 		{
 			return Modulo(i, Prime);
 		}
 
-		public static int Modulo(int n, int prime)
+		public static long Modulo(long n, long prime)
 		{
 			n = n % prime;
 			return n < 0 ? n + prime : n;
@@ -215,7 +215,7 @@ namespace SecretSharing
 
 		public static Zp EvalutePolynomialAtPoint(IList<Zp> polynomial, Zp point)
 		{
-			int evaluation = 0;
+			long evaluation = 0;
 			for (int i = 0; i < polynomial.Count; i++)
 			{
 				evaluation += polynomial[i].Value * NumTheoryUtils.ModPow(point.Value, i, point.Prime);
@@ -243,7 +243,7 @@ namespace SecretSharing
 
 		public int Size
 		{
-			get { return sizeof(int); }
+			get { return sizeof(long); }
 		}
 	}
 }

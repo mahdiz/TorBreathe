@@ -1,6 +1,7 @@
 ﻿using SecretSharing;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -54,7 +55,7 @@ namespace BridgeDistribution
                 var ba = message as BridgeAssignMessage;
 
                 if (distributorIds.Count == 1)
-                    bridgeId = ba.BridgeShare.Value;
+                    bridgeId = (int)ba.BridgeShare.Value;
                 else
                 {
                     if (!BridgeShares.ContainsKey(ba.BridgePseudonym))
@@ -64,15 +65,16 @@ namespace BridgeDistribution
 
                     if (BridgeShares[ba.BridgePseudonym].Count == distributorIds.Count)
                     {
-                        bridgeId = ShamirSharing.SimpleRecombine(BridgeShares[ba.BridgePseudonym],
+                        bridgeId = (int)ShamirSharing.Reconstruct(BridgeShares[ba.BridgePseudonym],
                             Simulator.PolynomialDegree, Simulator.Prime).Value;
 
+                        Debug.Assert(Simulator.GetNodes<Bridge>().Any(b => b.Id == bridgeId), "Invalid bridge ID reconstructed from shares.");
                         BridgeShares[ba.BridgePseudonym] = null;
                     }
                 }
 
                 if (bridgeId >= 0)
-                    Bridges.Add(Simulator.Bridges[bridgeId]);
+                    Bridges.Add(Simulator.GetNode<Bridge>(bridgeId));
             }
             else
                 throw new Exception("Invalid message received.");

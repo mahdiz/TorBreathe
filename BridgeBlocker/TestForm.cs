@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SecretSharing;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,10 +19,12 @@ namespace BridgeDistribution
 {
 	public partial class MainForm : Form
 	{
-        private const int defaultN = 4096;         // default number of users (must be >= 4)
-        private const int numDistributors = 6;
+        private const int seed = 123;
+        private const int defaultUserCount = 512;
+        private const int defaultDistCount = 6;    
         private const int plotMarkerSize = 15;
         private const int plotThickness = 6;
+        private int repeatCount;
         private bool stopped = true;
         private bool stopRequest, exitRequest;
         private bool logIncConsidered;
@@ -37,35 +40,37 @@ namespace BridgeDistribution
 
         private void TestForm_Load(object sender, EventArgs e)
         {
-            tbUserCount.Value = (int)Math.Log(defaultN, 2);
+            tbUserCount.Value = (int)Math.Log(defaultUserCount, 2);
+            tbDistCount.Value = defaultDistCount;
             chPlots.Series.Clear();
             rbSingleRun.Checked = true;
             rbPlot.Checked = true;
             cboGridX.Checked = true;
             cboGridY.Checked = true;
             rbLegendLeft.Checked = true;
-            //btnCollapseRight_Click(sender, e);
         }
 
         private void btnStart_Click(object sender, EventArgs e)
         {
             if (stopped)
             {
-                stopped = stopRequest = exitRequest = logIncConsidered = false;
-
                 dgvStats.Rows.Clear();
                 chPlots.Series.Clear();
+                blockedSoFar = 0;
+                StaticRandom.Init(seed);
+                Simulator.Reset();
+
+                #region UI Initialization
                 btnStart.Text = "Stop";
                 cbLogY.Enabled = false;
-                blockedSoFar = 0;
-                Simulator.Reset();
-                Application.DoEvents();
+                stopped = stopRequest = exitRequest = logIncConsidered = false;
 
                 // Set up plots
                 chPlots.Series.Add(new Series(cbThirsty.Text));
                 chPlots.Series.Add(new Series(cbm.Text));
                 chPlots.Series.Add(new Series(cbb.Text));
                 chPlots.Series.Add(new Series(cbN.Text));
+                chPlots.Series.Add(new Series(cbBandwidth.Text));
                 chPlots.Series.Add(new Series(cbTime.Text));
                 chPlots.Series.Add(new Series(cbmm.Text));
                 chPlots.ChartAreas[0].AxisX.MajorGrid.LineColor = Color.LightGray;
@@ -94,20 +99,22 @@ namespace BridgeDistribution
                 chPlots.Series[5].Color = chPlots.Series[3].Color;
                 chPlots.Series[5].MarkerStyle = MarkerStyle.Square;
                 UpdatePlots();
+                Application.DoEvents();
+                #endregion
 
                 int n = (int)Math.Pow(2, tbUserCount.Value);
-                int t_max = rbMultipleRuns.Checked ? t_max = tbBadCountMax.Value : tbBadCount.Value + 1;
+                int t_max = rbMultipleRuns.Checked ? t_max = tbBadCountMax.Value : tbCorruptCount.Value + 1;
 
-                for (int t = tbBadCount.Value; t < t_max && !stopRequest; t++)
+                for (int t = tbCorruptCount.Value; t < t_max && !stopRequest; t++)
                 {
                     // Create the distributors
                     var dists = new List<Distributor>();
 
-                    for (int i = 1; i < numDistributors; i++)
+                    for (int i = 1; i < tbDistCount.Value; i++)
                         dists.Add(new Distributor());
 
                     var leader = new LeaderDistributor(dists.Select(d => d.Id).ToList(),
-                        rbBnb.Checked ? DistributeAlgorithm.BallsAndBins : DistributeAlgorithm.Matrix, 123);
+                        rbBnb.Checked ? DistributeAlgorithm.BallsAndBins : DistributeAlgorithm.Matrix, seed);
                     dists.Insert(0, leader);
 
                     var distIds = dists.Select(d => d.Id).ToList();
@@ -123,17 +130,19 @@ namespace BridgeDistribution
                     else if (rbStochastic.Checked)
                         attackModel = AttackModel.Stochastic;
 
-                    var censor = new Censor(dists, attackModel, tbStochastic.Value / 40.0, 456);
+                    var censor = new Censor(dists, attackModel, tbStochastic.Value / 40.0, seed);
                     censor.AddCorruptUsers(t);
 
                     // Create a sufficient number of bridges
+                    repeatCount = tbC.Value == 0 ? 1 : tbC.Value * (int)Math.Ceiling(Math.Log(n, 2));
                     var bridges = new List<Bridge>();
-                    for (int i = 0; i < t * Math.Log(t, 2); i++)
+                    for (int i = 0; i < (8*t - 2) * repeatCount; i++)
                         bridges.Add(new Bridge(distIds));
 
                     runLog = new RunLog();
                     leader.OnRoundEnd += OnRoundEnd;
-                    leader.Run(tbC.Value);
+
+                    leader.Run(repeatCount);
 
                     logIncConsidered = cbLogY.Checked;
                     cbLogY.Enabled = true;
@@ -156,90 +165,35 @@ namespace BridgeDistribution
                 Close();
         }
 
-        private bool OnRoundEnd(int round, List<int>[] bridgeIds)
+        private bool OnRoundEnd(int round, int bridgeCount, int blockedCount)
         {
-            var bridges = new List<Bridge>();
-            foreach (var bis in bridgeIds)
-                foreach (var bi in bis)
-                    bridges.Add(Simulator.Bridges[bi]);
+            var userCount = Simulator.NodeCount<User>();
+            var corruptCount = Simulator.NodeCount<CorruptUser>();
+            var thirstyCount = Simulator.GetNodes<User>().Where(u => u.IsThirsty && !(u is CorruptUser)).Count();
 
-            var log = new RoundLog(round, Simulator.Users.Values.ToList(), bridges);
-            runLog.Add(log);
-
-            int N = blockedSoFar + log.BridgeCount;
-            blockedSoFar += log.BlockedCount;
+            int N = blockedSoFar + bridgeCount;
+            blockedSoFar += blockedCount;
 
             // Add one new row to the grid view
             dgvStats.Rows.Add(new string[] {
-                round.ToString(), log.UsersCount.ToString(), log.CorruptsCount.ToString(), (log.BridgeCount / bridgeIds.Length).ToString(), 
-                log.BridgeCount.ToString(), log.BlockedCount.ToString(), N.ToString(), 
-                log.ThirstyCount.ToString(),
+                round.ToString(), userCount.ToString(), corruptCount.ToString(),
+                (bridgeCount / repeatCount).ToString(), bridgeCount.ToString(),
+                blockedCount.ToString(), N.ToString(), thirstyCount.ToString(),
             });
             
             if (rbSingleRun.Checked)
             {
                 // Add one point to the plot for this round for each plot
                 // (cbLogY.Checked ? 1 : 0) prevents log(zero) in log plots
-                chPlots.Series[cbThirsty.Text].Points.AddXY(round, log.ThirstyCount + (cbLogY.Checked ? 1 : 0));
-                chPlots.Series[cbm.Text].Points.AddXY(round, log.BridgeCount);
-                chPlots.Series[cbb.Text].Points.AddXY(round, log.BlockedCount + (cbLogY.Checked ? 1 : 0));
+                chPlots.Series[cbThirsty.Text].Points.AddXY(round, thirstyCount + (cbLogY.Checked ? 1 : 0));
+                chPlots.Series[cbm.Text].Points.AddXY(round, bridgeCount);
+                chPlots.Series[cbb.Text].Points.AddXY(round, blockedCount + (cbLogY.Checked ? 1 : 0));
                 chPlots.Series[cbN.Text].Points.AddXY(round, N);
+                chPlots.Series[cbBandwidth.Text].Points.AddXY(round, Simulator.MessageCount);
             }
 
             Application.DoEvents();
             return stopRequest;
-        }
-
-        private void tbN_ValueChanged(object sender, EventArgs e)
-        {
-            var n = 1 << tbUserCount.Value;
-            lUserCount.Text = "n = " + n;
-            tbBadCount.TickFrequency = tbBadCountMax.TickFrequency = (n - 1) / (int)Math.Log(n - 1, 2);
-            tbBadCount.Maximum = tbBadCountMax.Maximum = n - 1;
-            tbBadCount.Value = tbBadCountMax.Value = n / 2;
-            lBadCount.Text = "t = " + tbBadCount.Value;
-        }
-
-        private void tbT_ValueChanged(object sender, EventArgs e)
-        {
-            lBadCount.Text = "t = " + tbBadCount.Value;
-            if (tbBadCount.Value > tbBadCountMax.Value)
-                tbBadCountMax.Value = tbBadCount.Value;
-        }
-
-        private void tbC_ValueChanged(object sender, EventArgs e)
-        {
-            lc.Text = "c = " + tbC.Value;
-        }
-
-        private void btnCollapseLeft_Click(object sender, EventArgs e)
-        {
-            btnCollapseLeft.Enabled = false;
-            pLeftPanel.Visible = !pLeftPanel.Visible;
-            if (pLeftPanel.Visible)
-                btnCollapseLeft.Text = "<<<";       // Panel is open
-            else
-                btnCollapseLeft.Text = ">>>";       // Panel is closed
-
-            btnCollapseLeft.Enabled = true;
-        }
-
-        private void btnCollapseRight_Click(object sender, EventArgs e)
-        {
-            btnCollapseRight.Enabled = false;
-            pRightPanel.Visible = !pRightPanel.Visible;
-            if (pRightPanel.Visible)
-            {
-                btnCollapseRight.Text = ">>>";      // Panel is open
-                llPlotSettings.Text = "Hide plot settings";
-            }
-            else
-            {
-                btnCollapseRight.Text = "<<<";      // Panel is closed
-                llPlotSettings.Text = "Show plot settings";
-            }
-
-            btnCollapseRight.Enabled = true;
         }
 
         public void UpdatePlots()
@@ -250,6 +204,7 @@ namespace BridgeDistribution
                 chPlots.Series[cbm.Text].Enabled = rbSingleRun.Checked && cbm.Checked;
                 chPlots.Series[cbb.Text].Enabled = rbSingleRun.Checked && cbb.Checked;
                 chPlots.Series[cbN.Text].Enabled = rbSingleRun.Checked && cbN.Checked;
+                chPlots.Series[cbBandwidth.Text].Enabled = rbSingleRun.Checked && cbBandwidth.Checked;
 
                 chPlots.Series[cbTime.Text].Enabled = rbMultipleRuns.Checked && cbTime.Checked;
                 chPlots.Series[cbmm.Text].Enabled = rbMultipleRuns.Checked && cbmm.Checked;
@@ -258,7 +213,7 @@ namespace BridgeDistribution
                 chPlots.ChartAreas[0].AxisY.IsLogarithmic = cbLogY.Checked;
                 chPlots.Legends[0].Enabled = cbLegend.Checked;
 
-                chPlots.Legends[0].Docking = rbLegendLeft.Checked ? Docking.Left : 
+                chPlots.Legends[0].Docking = rbLegendLeft.Checked ? Docking.Left :
                     rbLegendRight.Checked ? Docking.Right : rbLegendTop.Checked ? Docking.Top : Docking.Bottom;
 
                 if (rbSingleRun.Checked)
@@ -278,31 +233,43 @@ namespace BridgeDistribution
             }
         }
 
-        private void rbPlot_CheckedChanged(object sender, EventArgs e)
+        #region User Interface Event Handlers
+
+        private void tbN_ValueChanged(object sender, EventArgs e)
         {
-            dgvStats.Visible = rbGridView.Checked;
-            chPlots.Visible = !rbGridView.Checked;
+            var n = 1 << tbUserCount.Value;
+            lUserCount.Text = "# Users = " + n;
+            tbCorruptCount.TickFrequency = tbBadCountMax.TickFrequency = (n - 1) / (int)Math.Log(n - 1, 2);
+            tbCorruptCount.Maximum = tbBadCountMax.Maximum = n - 1;
+            tbCorruptCount.Value = tbBadCountMax.Value = n / 2;
+            lCorruptCount.Text = "t = " + tbCorruptCount.Value;
         }
 
-        private void rbSingleRun_CheckedChanged(object sender, EventArgs e)
+        private void tbT_ValueChanged(object sender, EventArgs e)
         {
-            cbThirsty.Enabled = cbm.Enabled = cbb.Enabled = cbN.Enabled = rbSingleRun.Checked;
-            cbTime.Enabled = cbmm.Enabled = tbBadCountMax.Enabled = lBadCountMax.Enabled = !rbSingleRun.Checked;
+            lCorruptCount.Text = "# Corrupt Users = " + tbCorruptCount.Value;
+            if (tbCorruptCount.Value > tbBadCountMax.Value)
+                tbBadCountMax.Value = tbCorruptCount.Value;
         }
 
-        private void rbMultipleRuns_CheckedChanged(object sender, EventArgs e)
+        private void tbC_ValueChanged(object sender, EventArgs e)
         {
-            rbSingleRun_CheckedChanged(sender, e);
+            if (tbC.Value == 0)
+                lc.Text = "# Repeats = 1";
+            else if (tbC.Value == 1)
+                lc.Text = "# Repeats = log(n)";
+            else
+                lc.Text = "# Repeats = " + tbC.Value + "*log(n)";
         }
 
         private void tbBadCountMax_ValueChanged(object sender, EventArgs e)
         {
-            lBadCountMax.Text = "t_max = " + tbBadCountMax.Value;
+            lBadCountMax.Text = "Max # Corrupt Users = " + tbBadCountMax.Value;
         }
 
-        private void cb_CheckedChanged(object sender, EventArgs e)
+        private void tbDistCount_ValueChanged(object sender, EventArgs e)
         {
-            UpdatePlots();
+            lDistCount.Text = "# Distributors = " + tbDistCount.Value;
         }
 
         private void tbMarkerStep_ValueChanged(object sender, EventArgs e)
@@ -323,6 +290,52 @@ namespace BridgeDistribution
                 foreach (var series in chPlots.Series)
                     series.MarkerStyle = MarkerStyle.None;
             }
+        }
+
+        private void btnCollapseLeft_Click(object sender, EventArgs e)
+        {
+            btnCollapseLeft.Enabled = false;
+            pLeftPanel.Visible = !pLeftPanel.Visible;
+            if (pLeftPanel.Visible)
+                btnCollapseLeft.Text = "<<<";       // Panel is open
+            else
+                btnCollapseLeft.Text = ">>>";       // Panel is closed
+
+            btnCollapseLeft.Enabled = true;
+        }
+
+        private void btnCollapseRight_Click(object sender, EventArgs e)
+        {
+            btnCollapseRight.Enabled = false;
+            pRightPanel.Visible = !pRightPanel.Visible;
+            if (pRightPanel.Visible)
+                btnCollapseRight.Text = ">>>";      // Panel is open
+            else
+                btnCollapseRight.Text = "<<<";      // Panel is closed
+
+            btnCollapseRight.Enabled = true;
+        }
+
+        private void rbPlot_CheckedChanged(object sender, EventArgs e)
+        {
+            dgvStats.Visible = rbGridView.Checked;
+            chPlots.Visible = !rbGridView.Checked;
+        }
+
+        private void rbSingleRun_CheckedChanged(object sender, EventArgs e)
+        {
+            cbThirsty.Enabled = cbm.Enabled = cbb.Enabled = cbN.Enabled = rbSingleRun.Checked;
+            cbTime.Enabled = cbmm.Enabled = tbBadCountMax.Enabled = lBadCountMax.Enabled = !rbSingleRun.Checked;
+        }
+
+        private void rbMultipleRuns_CheckedChanged(object sender, EventArgs e)
+        {
+            rbSingleRun_CheckedChanged(sender, e);
+        }
+
+        private void cb_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdatePlots();
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -454,6 +467,7 @@ namespace BridgeDistribution
             }
             logIncConsidered = (incdec >= 0);
             UpdatePlots();
-        }        
+        }
+        #endregion
     }
 }

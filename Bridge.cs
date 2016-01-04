@@ -28,20 +28,27 @@ namespace BridgeDistribution
 
         public Bridge(List<int> distributorIds)
 		{
-            Pseudonym = StaticRandom.Next(long.MinValue, long.MaxValue);
+            Pseudonym = StaticRandom.Next(0, long.MaxValue);
 
             this.distributorIds = distributorIds;
             var distCount = distributorIds.Count;
 
             if (distCount == 1)
-                Send(distributorIds[0], new Zp(Simulator.Prime, Id), MessageType.BridgeJoin);
+            {
+                Send(distributorIds[0],
+                    new BridgeJoinMessage(Pseudonym, new Zp(Simulator.Prime, Id)),
+                    MessageType.BridgeJoin);
+            }
             else
             {
-                // secret share my id among all distributors
+                // Secret share my id among all distributors
                 var shares = ShamirSharing.Share(new Zp(Simulator.Prime, Id),
                     distCount, Simulator.PolynomialDegree);
 
                 Debug.Assert(shares.Count == distCount);
+                Debug.Assert(Id == ShamirSharing.Reconstruct(shares,
+                            Simulator.PolynomialDegree, Simulator.Prime).Value,
+                            "The secret is not reconstructible! There is probably an overflow in polynomial evaluation of the sharing phase in Shamir sharing.");
 
                 for (int i = 0; i < distCount; i++)
                     Send(distributorIds[i], new BridgeJoinMessage(Pseudonym, shares[i]), MessageType.BridgeJoin);
@@ -50,8 +57,7 @@ namespace BridgeDistribution
 
 		public void Block()
 		{
-            Debug.Assert(IsBlocked == false);
-
+            //Debug.Assert(IsBlocked == false);
 			IsBlocked = true;
             distributorIds.ForEach(d => Send(d, Pseudonym, MessageType.BridgeBlocked));
 		}
