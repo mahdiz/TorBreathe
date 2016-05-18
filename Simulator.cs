@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BridgeDistribution
+namespace Bricks
 {
     public static class Simulator
     {
@@ -23,12 +23,19 @@ namespace BridgeDistribution
         /// </summary>
         public static int MessageCount { get; private set; }
 
+        /// <summary>
+        /// Number of emails sent.
+        /// </summary>
+        public static int EmailCount { get; private set; }
+
         private static Dictionary<int, Node> nodes = new Dictionary<int, Node>();
+        private static Dictionary<long, Node> nodesPseudonyms = new Dictionary<long, Node>();
         private static int numDistributors;
 
         public static void RegisterNode(Node node)
         {
             nodes.Add(node.Id, node);
+            nodesPseudonyms.Add(node.Pseudonym, node);
 
             if (node is Distributor)
                 numDistributors++;
@@ -57,11 +64,21 @@ namespace BridgeDistribution
             nodes[toNode].Receive(fromNode, message, type);
         }
 
+        public static void SendEmail(long fromPseudonym, long toPseudonym, object message, MessageType type)
+        {
+            if (fromPseudonym != toPseudonym && type == MessageType.UserAssignments)
+                EmailCount++;
+
+            nodesPseudonyms[toPseudonym].ReceiveEmail(fromPseudonym, message, type);
+        }
+
         public static void Reset()
         {
             Node.Reset();
             nodes = new Dictionary<int, Node>();
+            nodesPseudonyms = new Dictionary<long, Node>();
             MessageCount = 0;
+            EmailCount = 0;
             numDistributors = 0;
         }
     }

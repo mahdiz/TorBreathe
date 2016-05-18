@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using BridgeDistribution;
+using Bricks;
 
-namespace BridgeDistribution
+namespace Bricks
 {
 	class Program
 	{

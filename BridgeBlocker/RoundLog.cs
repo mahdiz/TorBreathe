@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BridgeDistribution
+namespace Bricks
 {
     public class RoundLog
     {
@@ -20,7 +20,7 @@ namespace BridgeDistribution
         /// Number of users.
         /// </summary>
         public int UsersCount { get; private set; }
-        
+
         /// <summary>
         /// Number of corrupt users in this round.
         /// </summary>
@@ -41,15 +41,18 @@ namespace BridgeDistribution
         /// </summary>
         public int ThirstyCount { get; private set; }
 
-        public RoundLog(int round, List<User> users, List<Bridge> bridges)
+        public int EmailCount { get; private set; }
+
+        public RoundLog(int round, int usersCount, int corruptsCount, int thirstyCount, int bridgesCount, int blockedCount, int emailCount)
         {
             Round = round;
-            UsersCount = users.Count;
-            CorruptsCount = users.Count(u => u is CorruptUser);
+            UsersCount = usersCount;
+            CorruptsCount = corruptsCount;
 
-            BridgeCount = bridges.Count;
-            BlockedCount = bridges.Count(x => x.IsBlocked);
-            ThirstyCount = users.Where(u => u.IsThirsty && !(u is CorruptUser)).Count();
+            BridgeCount = bridgesCount;
+            BlockedCount = blockedCount;
+            ThirstyCount = thirstyCount;
+            EmailCount = emailCount;
         }
 
         public override string ToString()

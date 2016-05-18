@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BridgeDistribution
+namespace Bricks
 {
 	public enum AttackModel
 	{
@@ -16,8 +16,8 @@ namespace BridgeDistribution
 
     internal class CorruptUser : User
 	{
-        public CorruptUser(List<int> distributors)
-            : base(distributors)
+        public CorruptUser(List<long> distributorPseudonyms)
+            : base(distributorPseudonyms)
         {
         }
     }
@@ -42,7 +42,7 @@ namespace BridgeDistribution
 
 		public void AddCorruptUsers(int t)
 		{
-            var distIds = distributors.Select(d => d.Id).ToList();
+            var distIds = distributors.Select(d => d.Pseudonym).ToList();
             for (int i = 0; i < t; i++)
 			{
 				var u = new CorruptUser(distIds);

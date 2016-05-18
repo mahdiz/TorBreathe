@@ -15,13 +15,13 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 
-namespace BridgeDistribution
+namespace Bricks
 {
 	public partial class MainForm : Form
 	{
         private const int seed = 123;
-        private const int defaultUserCount = 512;
-        private const int defaultDistCount = 6;    
+        private const int defaultUserCount = 32;
+        private const int defaultDistCount = 1;    
         private const int plotMarkerSize = 15;
         private const int plotThickness = 6;
         private int repeatCount;
@@ -70,7 +70,8 @@ namespace BridgeDistribution
                 chPlots.Series.Add(new Series(cbm.Text));
                 chPlots.Series.Add(new Series(cbb.Text));
                 chPlots.Series.Add(new Series(cbN.Text));
-                chPlots.Series.Add(new Series(cbBandwidth.Text));
+                chPlots.Series.Add(new Series(cbDistMessageCount.Text));
+                chPlots.Series.Add(new Series(cbEmailCount.Text));
                 chPlots.Series.Add(new Series(cbTime.Text));
                 chPlots.Series.Add(new Series(cbmm.Text));
                 chPlots.ChartAreas[0].AxisX.MajorGrid.LineColor = Color.LightGray;
@@ -94,10 +95,13 @@ namespace BridgeDistribution
                 chPlots.Series[2].MarkerStyle = MarkerStyle.Diamond;
                 chPlots.Series[3].MarkerStyle = MarkerStyle.Circle;
 
-                chPlots.Series[4].Color = chPlots.Series[2].Color;
-                chPlots.Series[4].MarkerStyle = MarkerStyle.Circle;
-                chPlots.Series[5].Color = chPlots.Series[3].Color;
-                chPlots.Series[5].MarkerStyle = MarkerStyle.Square;
+                chPlots.Series[5].Color = chPlots.Series[2].Color;
+                chPlots.Series[5].MarkerStyle = MarkerStyle.Circle;
+
+                chPlots.Series[6].Color = chPlots.Series[2].Color;
+                chPlots.Series[6].MarkerStyle = MarkerStyle.Circle;
+                chPlots.Series[7].Color = chPlots.Series[3].Color;
+                chPlots.Series[7].MarkerStyle = MarkerStyle.Square;
                 UpdatePlots();
                 Application.DoEvents();
                 #endregion
@@ -117,7 +121,7 @@ namespace BridgeDistribution
                         rbBnb.Checked ? DistributeAlgorithm.BallsAndBins : DistributeAlgorithm.Matrix, seed);
                     dists.Insert(0, leader);
 
-                    var distIds = dists.Select(d => d.Id).ToList();
+                    var distIds = dists.Select(d => d.Pseudonym).ToList();
 
                     // Add honest users
                     for (int i = 0; i < n - t; i++)
@@ -136,9 +140,10 @@ namespace BridgeDistribution
                     // Create a sufficient number of bridges
                     repeatCount = tbC.Value == 0 ? 1 : tbC.Value * (int)Math.Ceiling(Math.Log(n, 2));
                     var bridges = new List<Bridge>();
-                    for (int i = 0; i < (8*t - 2) * repeatCount; i++)
+                    for (int i = 0; i < (8 * t - 2) * repeatCount; i++)
                         bridges.Add(new Bridge(distIds));
 
+                    leader.BridgePseudonyms = bridges.Select(b => b.Pseudonym).ToList();
                     runLog = new RunLog();
                     leader.OnRoundEnd += OnRoundEnd;
 
@@ -155,6 +160,67 @@ namespace BridgeDistribution
                         chPlots.Series[cbmm.Text].Points.AddXY(t, N);
                     }
                 }
+
+                //for (int x = 8; x < 12 && !stopRequest; x++)
+                //{
+                //    blockedSoFar = 0;
+                //    Simulator.Reset();
+
+                //    int n = (int)Math.Pow(2, x);
+                //    int t = n / 2;
+                //    // Create the distributors
+                //    var dists = new List<Distributor>();
+
+                //    for (int i = 1; i < tbDistCount.Value; i++)
+                //        dists.Add(new Distributor());
+
+                //    var leader = new LeaderDistributor(dists.Select(d => d.Id).ToList(),
+                //        rbBnb.Checked ? DistributeAlgorithm.BallsAndBins : DistributeAlgorithm.Matrix, seed);
+                //    dists.Insert(0, leader);
+
+                //    var distIds = dists.Select(d => d.Pseudonym).ToList();
+
+                //    // Add honest users
+                //    for (int i = 0; i < n - t; i++)
+                //        new User(distIds);
+
+                //    // Add corrupt users
+                //    var attackModel = AttackModel.Aggressive;
+                //    if (rbPrudent.Checked)
+                //        attackModel = AttackModel.Prudent;
+                //    else if (rbStochastic.Checked)
+                //        attackModel = AttackModel.Stochastic;
+
+                //    var censor = new Censor(dists, attackModel, tbStochastic.Value / 40.0, seed);
+                //    censor.AddCorruptUsers(t);
+
+                //    // Create a sufficient number of bridges
+                //    repeatCount = tbC.Value == 0 ? 1 : tbC.Value * (int)Math.Ceiling(Math.Log(n, 2));
+                //    var bridges = new List<Bridge>();
+                //    for (int i = 0; i < (8 * t - 2) * repeatCount; i++)
+                //        bridges.Add(new Bridge(distIds));
+
+                //    leader.BridgePseudonyms = bridges.Select(b => b.Pseudonym).ToList();
+                //    runLog = new RunLog();
+                //    leader.OnRoundEnd += OnRoundEnd;
+
+                //    leader.Run(repeatCount);
+
+                //    logIncConsidered = cbLogY.Checked;
+                //    cbLogY.Enabled = true;
+
+                //    chPlots.Series[cbEmailCount.Text].Points.AddXY(n, (double)runLog.Sum(r => r.EmailCount) / n);
+
+                //}
+
+                //chPlots.Series[cbEmailCount.Text].Points.AddXY(32, 5);
+                //chPlots.Series[cbEmailCount.Text].Points.AddXY(64, 10);
+                //chPlots.Series[cbEmailCount.Text].Points.AddXY(128, 30);
+                //chPlots.Series[cbEmailCount.Text].Points.AddXY(256, 60);
+                //chPlots.Series[cbEmailCount.Text].Points.AddXY(512, 90);
+                //chPlots.Series[cbEmailCount.Text].Points.AddXY(1024, 126);
+                //chPlots.Series[cbEmailCount.Text].Points.AddXY(2048, 168);
+                //chPlots.Series[cbEmailCount.Text].Points.AddXY(4096, 210);
             }
             else stopRequest = true;
 
@@ -180,7 +246,8 @@ namespace BridgeDistribution
                 (bridgeCount / repeatCount).ToString(), bridgeCount.ToString(),
                 blockedCount.ToString(), N.ToString(), thirstyCount.ToString(),
             });
-            
+            runLog.Add(new RoundLog(round, userCount, corruptCount, thirstyCount, bridgeCount, blockedCount, Simulator.EmailCount));
+
             if (rbSingleRun.Checked)
             {
                 // Add one point to the plot for this round for each plot
@@ -189,7 +256,8 @@ namespace BridgeDistribution
                 chPlots.Series[cbm.Text].Points.AddXY(round, bridgeCount);
                 chPlots.Series[cbb.Text].Points.AddXY(round, blockedCount + (cbLogY.Checked ? 1 : 0));
                 chPlots.Series[cbN.Text].Points.AddXY(round, N);
-                chPlots.Series[cbBandwidth.Text].Points.AddXY(round, Simulator.MessageCount);
+                chPlots.Series[cbDistMessageCount.Text].Points.AddXY(round, Simulator.MessageCount);
+                //chPlots.Series[cbEmailCount.Text].Points.AddXY(round, (double)Simulator.EmailCount / userCount);
             }
 
             Application.DoEvents();
@@ -204,7 +272,8 @@ namespace BridgeDistribution
                 chPlots.Series[cbm.Text].Enabled = rbSingleRun.Checked && cbm.Checked;
                 chPlots.Series[cbb.Text].Enabled = rbSingleRun.Checked && cbb.Checked;
                 chPlots.Series[cbN.Text].Enabled = rbSingleRun.Checked && cbN.Checked;
-                chPlots.Series[cbBandwidth.Text].Enabled = rbSingleRun.Checked && cbBandwidth.Checked;
+                chPlots.Series[cbDistMessageCount.Text].Enabled = rbSingleRun.Checked && cbDistMessageCount.Checked;
+                chPlots.Series[cbEmailCount.Text].Enabled = rbSingleRun.Checked && cbEmailCount.Checked;
 
                 chPlots.Series[cbTime.Text].Enabled = rbMultipleRuns.Checked && cbTime.Checked;
                 chPlots.Series[cbmm.Text].Enabled = rbMultipleRuns.Checked && cbmm.Checked;

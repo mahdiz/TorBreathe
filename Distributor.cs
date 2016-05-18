@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BridgeDistribution
+namespace Bricks
 {
 	public delegate void YieldHandler(int threshold, int repeatCount);
 	public delegate bool RoundEndHandler(int round, int bridgeCount, int blockedCount);
@@ -24,24 +24,24 @@ namespace BridgeDistribution
     //    }
     //}
 
-    public class UserAssignMessage
-    {
-        public readonly int UserId;
-        public readonly long BridgePseudonym;
+    //public class UserAssignMessage
+    //{
+    //    public readonly long UserPseudonym;
+    //    public readonly List<long> BridgePseudonym;
 
-        public UserAssignMessage(int userId, long bridgePseudonym)
-        {
-            UserId = userId;
-            BridgePseudonym = bridgePseudonym;
-        }
-    }
+    //    public UserAssignMessage(long userPseudonym, List<long> bridgePseudonym)
+    //    {
+    //        UserPseudonym = userPseudonym;
+    //        BridgePseudonym = bridgePseudonym;
+    //    }
+    //}
 
-    public class BridgeAssignMessage
+    public class UserAssignment
     {
         public readonly long BridgePseudonym;
         public readonly Zp BridgeShare;
 
-        public BridgeAssignMessage(long bridgePseudonym, Zp bridgeShare)
+        public UserAssignment(long bridgePseudonym, Zp bridgeShare)
         {
             BridgePseudonym = bridgePseudonym;
             BridgeShare = bridgeShare;
@@ -50,10 +50,31 @@ namespace BridgeDistribution
 
     public class Distributor : Node
     {
-        protected List<int> Users = new List<int>();
+        protected List<long> Users = new List<long>();
         protected Dictionary<long, Zp> BridgeShares = new Dictionary<long, Zp>();
 
         public override void Receive(int fromNode, object message, MessageType type)
+        {
+            if (type == MessageType.LeaderAssignments)    // From the leader: Send the bridge to the user.
+            {
+                var assignments = message as Dictionary<long, List<long>>;
+
+                // Send each user all of its assigned bridge shares in one email
+                foreach (var a in assignments)
+                {
+                    // a.Key is the user pseudonym
+                    // a.Value is the list of bridge pseudonyms assigned to the user
+                    var userAssignments = new List<UserAssignment>();
+                    foreach (var bridgePseudonym in a.Value)
+                        userAssignments.Add(new UserAssignment(bridgePseudonym, BridgeShares[bridgePseudonym]));
+
+                    SendEmail(a.Key, userAssignments, MessageType.UserAssignments);
+                }
+            }
+            else throw new Exception("Invalid message received.");
+        }
+
+        public override void ReceiveEmail(long fromPseudonym, object message, MessageType type)
         {
             switch (type)
             {
@@ -62,27 +83,20 @@ namespace BridgeDistribution
                     BridgeShares[bj.Pseudonym] = bj.IdShare;
                     break;
 
-                case MessageType.UserAssign:    // From the leader: Send the bridge to the user.
-                    var ba = message as UserAssignMessage;
-                    Send(ba.UserId, 
-                         new BridgeAssignMessage(ba.BridgePseudonym, BridgeShares[ba.BridgePseudonym]), 
-                         MessageType.BridgeAssign);
-                    break;
-
                 case MessageType.UserJoin:      // From a user: I'm joining the protocol.
-                    Users.Add((int)message);
+                    Users.Add(fromPseudonym);
                     break;
 
                 case MessageType.UserLeave:     // From a user: I'm leaving the protocol.
-                    Debug.Assert(Users.Remove((int)message), "User not found.");
+                    Debug.Assert(Users.Remove(fromPseudonym), "User not found.");
                     break;
 
                 case MessageType.BridgeBlocked:     // From bridge: I'm blocked; remove me from your list.
-                    BridgeShares.Remove((long)message);
+                    BridgeShares.Remove(fromPseudonym);
                     break;
 
                 default:
-                    throw new Exception("Invalid message received.");
+                    throw new Exception("Invalid email received.");
             }
         }
     }
@@ -97,10 +111,12 @@ namespace BridgeDistribution
         /// The distribution method
         /// </summary>
         public Distribute Distribute;
+        public List<long> BridgePseudonyms { private get; set; }
 
         private Random randGen;
         private List<int> distributorIds;
         private HashSet<long> blockedBridges = new HashSet<long>();
+        private Dictionary<long, List<long>> assignments;
 
         /// <summary>
         /// A function that calculates the round threshold for the number of bridges blocked in each round.
@@ -123,7 +139,7 @@ namespace BridgeDistribution
                 case DistributeAlgorithm.BallsAndBins:
                     Distribute = DistributeBnB;
                     threshold = delegate(int i) { return (int)Math.Pow(2, i); };
-                    distCount = delegate(int i) { return (int)Math.Pow(2, i + 1); };
+                    distCount = delegate(int i) { return (int)Math.Pow(2, i); };
                     break;
 
                 case DistributeAlgorithm.Matrix:
@@ -143,7 +159,10 @@ namespace BridgeDistribution
         /// <param name="c">Repeats the distribute method c*Log(n) times. If c=0, then repeats the method only once.</param>
         public void Run(int repeatCount)
         {
-            int i = 0, m = 0;       // Round number
+            if (BridgePseudonyms == null)
+                throw new InvalidOperationException("Bridge pseudonyms must be set before running the protocol.");
+
+            int i = 0, d = 0;       // Round number, number of bridges distributed in the current round
             int n = Users.Count;    // Number of users
             bool stopped = false, stable = false, nextRound = true;
             var repeatBridges = new List<long>[repeatCount];      // List of bridges distributed in each repeat
@@ -157,19 +176,26 @@ namespace BridgeDistribution
 
                     // Update the parameters
                     n = Users.Count;
-                    m = distCount(i);       // Number of bridges distributed in current round for each repeat
+                    d = distCount(i);       // Number of bridges distributed in current round for each repeat
+                    assignments = new Dictionary<long, List<long>>();   // (userID, List of bridges assigned to the user)
 
-                    if (m * repeatCount < n)
+                    if (d * repeatCount < n)
                     {
+                        if (BridgeShares.Count < d * repeatCount)
+                            RecruitBridges(d * repeatCount - BridgeShares.Count);
+
                         for (int j = 0; j < repeatCount; j++)
                         {
-                            repeatBridges[j] = BridgeShares.Keys.ToList().GetRange(j * m, m);
+                            repeatBridges[j] = BridgeShares.Keys.ToList().GetRange(j * d, d);
                             Distribute(repeatBridges[j]);
                         }
                     }
                     else
                     {
                         // Give each user a fresh bridge that has never been assigned to any user
+                        if (BridgeShares.Count < n)
+                            RecruitBridges(n - BridgeShares.Count);
+
                         var e = BridgeShares.Keys.GetEnumerator();
                         foreach (var user in Users)
                         {
@@ -179,30 +205,42 @@ namespace BridgeDistribution
                         stable = true;
                     }
 
+                    // Tell the distributors to send the assigned bridges to their corresponding users
+                    distributorIds.ForEach(dist => Send(dist, assignments, MessageType.LeaderAssignments));
+
                     // Let the users perform their job
                     if (OnYield != null)
                         OnYield(threshold(i), repeatCount);
 
                     // Log the end of round
                     if (OnRoundEnd != null)
-                        stopped = OnRoundEnd(i, m * repeatCount < n ? m * repeatCount : n, blockedBridges.Count);
+                        stopped = OnRoundEnd(i, d * repeatCount < n ? d * repeatCount : n, blockedBridges.Count);
                 }
                 else stable = true;
 
                 // Calculate # of blocked bridges in each repeat
                 // Go to next round if in any of the repeats the number blocked bridges is >= the threshold.
-                if (repeatBridges.Any(rb => rb.Intersect(blockedBridges).Count() > threshold(i)))
+                var rbCounts = repeatBridges.Select(rb => rb.Intersect(blockedBridges).Count());
+                if (rbCounts.Any(rbCount => rbCount >= threshold(i)))
                     nextRound = true;
 
                 blockedBridges.Clear();
             }
         }
 
-        private void Assign(int userId, long bridgePseudonym)
+        private void Assign(long userPseudonym, long bridgePseudonym)
         {
-            // Tell the distributors (including myself) to send their own bridge shares to the user
-            var ba = new UserAssignMessage(userId, bridgePseudonym);
-            distributorIds.ForEach(d => Send(d, ba, MessageType.UserAssign));
+            if (!assignments.ContainsKey(userPseudonym))
+                assignments[userPseudonym] = new List<long>();
+
+            assignments[userPseudonym].Add(bridgePseudonym);
+        }
+
+        private void RecruitBridges(int num)
+        {
+            // Invite "num" bridges via the Pseudonym network to join the protocol.
+            for (int i = 0; i < num; i++)
+                SendEmail(BridgePseudonyms[i], null, MessageType.JoinRequest);
         }
 
         private void DistributeBnB(List<long> bridges)
@@ -252,12 +290,14 @@ namespace BridgeDistribution
             return array;
 		}
 
-        public override void Receive(int fromNode, object message, MessageType type)
+        public override void ReceiveEmail(long fromPseudonym, object message, MessageType type)
         {
             if (type == MessageType.BridgeBlocked)
-                blockedBridges.Add((long)message);
-
-            base.Receive(fromNode, message, type);
+            {
+                blockedBridges.Add(fromPseudonym);
+                BridgePseudonyms.Remove(fromPseudonym);
+            }
+            base.ReceiveEmail(fromPseudonym, message, type);
         }
     }
 }

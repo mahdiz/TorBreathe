@@ -1,4 +1,4 @@
-﻿namespace BridgeDistribution
+﻿namespace Bricks
 {
 	partial class MainForm
 	{
@@ -28,11 +28,11 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.pLeftPanel = new System.Windows.Forms.Panel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.rbAggressive = new System.Windows.Forms.RadioButton();
@@ -50,14 +50,14 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.rbMatrix = new System.Windows.Forms.RadioButton();
             this.rbBnb = new System.Windows.Forms.RadioButton();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.rbGridView = new System.Windows.Forms.RadioButton();
+            this.rbPlot = new System.Windows.Forms.RadioButton();
             this.btnStart = new System.Windows.Forms.Button();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.lc = new System.Windows.Forms.Label();
             this.tbC = new System.Windows.Forms.TrackBar();
             this.rbLegendLeft = new System.Windows.Forms.RadioButton();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.rbGridView = new System.Windows.Forms.RadioButton();
-            this.rbPlot = new System.Windows.Forms.RadioButton();
             this.splitterLeft = new System.Windows.Forms.Splitter();
             this.splitterRight = new System.Windows.Forms.Splitter();
             this.pRightPanel = new System.Windows.Forms.Panel();
@@ -80,6 +80,8 @@
             this.tbBadCountMax = new System.Windows.Forms.TrackBar();
             this.cbmm = new System.Windows.Forms.CheckBox();
             this.cbTime = new System.Windows.Forms.CheckBox();
+            this.cbEmailCount = new System.Windows.Forms.CheckBox();
+            this.cbDistMessageCount = new System.Windows.Forms.CheckBox();
             this.cbN = new System.Windows.Forms.CheckBox();
             this.cbb = new System.Windows.Forms.CheckBox();
             this.cbThirsty = new System.Windows.Forms.CheckBox();
@@ -102,7 +104,6 @@
             this.btnCollapseRight = new System.Windows.Forms.Button();
             this.pCollapseButtonLeft = new System.Windows.Forms.Panel();
             this.btnCollapseLeft = new System.Windows.Forms.Button();
-            this.cbBandwidth = new System.Windows.Forms.CheckBox();
             this.pLeftPanel.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbStochastic)).BeginInit();
@@ -111,9 +112,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbCorruptCount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbUserCount)).BeginInit();
             this.groupBox2.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbC)).BeginInit();
-            this.groupBox4.SuspendLayout();
             this.pRightPanel.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.groupBox6.SuspendLayout();
@@ -348,6 +349,41 @@
             this.rbBnb.Text = "Balls and Bins";
             this.rbBnb.UseVisualStyleBackColor = true;
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox4.Controls.Add(this.rbGridView);
+            this.groupBox4.Controls.Add(this.rbPlot);
+            this.groupBox4.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox4.Location = new System.Drawing.Point(10, 631);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(285, 72);
+            this.groupBox4.TabIndex = 4;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Output";
+            // 
+            // rbGridView
+            // 
+            this.rbGridView.AutoSize = true;
+            this.rbGridView.Location = new System.Drawing.Point(152, 31);
+            this.rbGridView.Name = "rbGridView";
+            this.rbGridView.Size = new System.Drawing.Size(85, 24);
+            this.rbGridView.TabIndex = 2;
+            this.rbGridView.Text = "Grid View";
+            this.rbGridView.UseVisualStyleBackColor = true;
+            // 
+            // rbPlot
+            // 
+            this.rbPlot.AutoSize = true;
+            this.rbPlot.Location = new System.Drawing.Point(20, 31);
+            this.rbPlot.Name = "rbPlot";
+            this.rbPlot.Size = new System.Drawing.Size(50, 24);
+            this.rbPlot.TabIndex = 3;
+            this.rbPlot.Text = "Plot";
+            this.rbPlot.UseVisualStyleBackColor = true;
+            this.rbPlot.CheckedChanged += new System.EventHandler(this.rbPlot_CheckedChanged);
+            // 
             // btnStart
             // 
             this.btnStart.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
@@ -409,41 +445,6 @@
             this.rbLegendLeft.Text = "Left";
             this.rbLegendLeft.UseVisualStyleBackColor = true;
             this.rbLegendLeft.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
-            // 
-            // groupBox4
-            // 
-            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox4.Controls.Add(this.rbGridView);
-            this.groupBox4.Controls.Add(this.rbPlot);
-            this.groupBox4.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox4.Location = new System.Drawing.Point(10, 631);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(285, 72);
-            this.groupBox4.TabIndex = 4;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Output";
-            // 
-            // rbGridView
-            // 
-            this.rbGridView.AutoSize = true;
-            this.rbGridView.Location = new System.Drawing.Point(152, 31);
-            this.rbGridView.Name = "rbGridView";
-            this.rbGridView.Size = new System.Drawing.Size(85, 24);
-            this.rbGridView.TabIndex = 2;
-            this.rbGridView.Text = "Grid View";
-            this.rbGridView.UseVisualStyleBackColor = true;
-            // 
-            // rbPlot
-            // 
-            this.rbPlot.AutoSize = true;
-            this.rbPlot.Location = new System.Drawing.Point(20, 31);
-            this.rbPlot.Name = "rbPlot";
-            this.rbPlot.Size = new System.Drawing.Size(50, 24);
-            this.rbPlot.TabIndex = 3;
-            this.rbPlot.Text = "Plot";
-            this.rbPlot.UseVisualStyleBackColor = true;
-            this.rbPlot.CheckedChanged += new System.EventHandler(this.rbPlot_CheckedChanged);
             // 
             // splitterLeft
             // 
@@ -627,7 +628,8 @@
             this.groupBox6.Controls.Add(this.tbBadCountMax);
             this.groupBox6.Controls.Add(this.cbmm);
             this.groupBox6.Controls.Add(this.cbTime);
-            this.groupBox6.Controls.Add(this.cbBandwidth);
+            this.groupBox6.Controls.Add(this.cbEmailCount);
+            this.groupBox6.Controls.Add(this.cbDistMessageCount);
             this.groupBox6.Controls.Add(this.cbN);
             this.groupBox6.Controls.Add(this.cbb);
             this.groupBox6.Controls.Add(this.cbThirsty);
@@ -646,7 +648,7 @@
             // 
             this.lMarkerStep.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.lMarkerStep.AutoSize = true;
-            this.lMarkerStep.Location = new System.Drawing.Point(30, 367);
+            this.lMarkerStep.Location = new System.Drawing.Point(30, 391);
             this.lMarkerStep.Name = "lMarkerStep";
             this.lMarkerStep.Size = new System.Drawing.Size(130, 20);
             this.lMarkerStep.TabIndex = 19;
@@ -657,7 +659,7 @@
             this.lBadCountMax.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.lBadCountMax.AutoSize = true;
             this.lBadCountMax.Enabled = false;
-            this.lBadCountMax.Location = new System.Drawing.Point(30, 297);
+            this.lBadCountMax.Location = new System.Drawing.Point(30, 321);
             this.lBadCountMax.Name = "lBadCountMax";
             this.lBadCountMax.Size = new System.Drawing.Size(162, 20);
             this.lBadCountMax.TabIndex = 19;
@@ -668,7 +670,7 @@
             this.tbMarkerStep.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbMarkerStep.LargeChange = 2;
-            this.tbMarkerStep.Location = new System.Drawing.Point(25, 392);
+            this.tbMarkerStep.Location = new System.Drawing.Point(25, 416);
             this.tbMarkerStep.Maximum = 20;
             this.tbMarkerStep.Name = "tbMarkerStep";
             this.tbMarkerStep.Size = new System.Drawing.Size(221, 50);
@@ -682,7 +684,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbBadCountMax.Enabled = false;
             this.tbBadCountMax.LargeChange = 2;
-            this.tbBadCountMax.Location = new System.Drawing.Point(25, 323);
+            this.tbBadCountMax.Location = new System.Drawing.Point(25, 347);
             this.tbBadCountMax.Maximum = 63;
             this.tbBadCountMax.Minimum = 1;
             this.tbBadCountMax.Name = "tbBadCountMax";
@@ -697,7 +699,7 @@
             this.cbmm.Checked = true;
             this.cbmm.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbmm.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbmm.Location = new System.Drawing.Point(32, 260);
+            this.cbmm.Location = new System.Drawing.Point(32, 284);
             this.cbmm.Name = "cbmm";
             this.cbmm.Size = new System.Drawing.Size(113, 24);
             this.cbmm.TabIndex = 12;
@@ -711,7 +713,7 @@
             this.cbTime.Checked = true;
             this.cbTime.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbTime.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbTime.Location = new System.Drawing.Point(32, 234);
+            this.cbTime.Location = new System.Drawing.Point(32, 258);
             this.cbTime.Name = "cbTime";
             this.cbTime.Size = new System.Drawing.Size(105, 24);
             this.cbTime.TabIndex = 13;
@@ -719,11 +721,35 @@
             this.cbTime.UseVisualStyleBackColor = true;
             this.cbTime.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
+            // cbEmailCount
+            // 
+            this.cbEmailCount.AutoSize = true;
+            this.cbEmailCount.Checked = true;
+            this.cbEmailCount.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbEmailCount.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbEmailCount.Location = new System.Drawing.Point(32, 196);
+            this.cbEmailCount.Name = "cbEmailCount";
+            this.cbEmailCount.Size = new System.Drawing.Size(174, 24);
+            this.cbEmailCount.TabIndex = 14;
+            this.cbEmailCount.Text = "Messages sent per user";
+            this.cbEmailCount.UseVisualStyleBackColor = true;
+            this.cbEmailCount.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
+            // 
+            // cbDistMessageCount
+            // 
+            this.cbDistMessageCount.AutoSize = true;
+            this.cbDistMessageCount.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbDistMessageCount.Location = new System.Drawing.Point(32, 170);
+            this.cbDistMessageCount.Name = "cbDistMessageCount";
+            this.cbDistMessageCount.Size = new System.Drawing.Size(89, 24);
+            this.cbDistMessageCount.TabIndex = 14;
+            this.cbDistMessageCount.Text = "Bandwidth";
+            this.cbDistMessageCount.UseVisualStyleBackColor = true;
+            this.cbDistMessageCount.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
+            // 
             // cbN
             // 
             this.cbN.AutoSize = true;
-            this.cbN.Checked = true;
-            this.cbN.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbN.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbN.Location = new System.Drawing.Point(32, 143);
             this.cbN.Name = "cbN";
@@ -736,8 +762,6 @@
             // cbb
             // 
             this.cbb.AutoSize = true;
-            this.cbb.Checked = true;
-            this.cbb.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbb.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbb.Location = new System.Drawing.Point(32, 116);
             this.cbb.Name = "cbb";
@@ -750,8 +774,6 @@
             // cbThirsty
             // 
             this.cbThirsty.AutoSize = true;
-            this.cbThirsty.Checked = true;
-            this.cbThirsty.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbThirsty.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbThirsty.Location = new System.Drawing.Point(32, 62);
             this.cbThirsty.Name = "cbThirsty";
@@ -764,8 +786,6 @@
             // cbm
             // 
             this.cbm.AutoSize = true;
-            this.cbm.Checked = true;
-            this.cbm.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbm.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbm.Location = new System.Drawing.Point(32, 89);
             this.cbm.Name = "cbm";
@@ -779,7 +799,7 @@
             // 
             this.rbMultipleRuns.AutoSize = true;
             this.rbMultipleRuns.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rbMultipleRuns.Location = new System.Drawing.Point(11, 205);
+            this.rbMultipleRuns.Location = new System.Drawing.Point(11, 229);
             this.rbMultipleRuns.Name = "rbMultipleRuns";
             this.rbMultipleRuns.Size = new System.Drawing.Size(174, 24);
             this.rbMultipleRuns.TabIndex = 10;
@@ -828,25 +848,25 @@
             // 
             this.chPlots.BorderlineColor = System.Drawing.Color.Black;
             this.chPlots.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea3.AxisX.MajorGrid.LineWidth = 0;
-            chartArea3.AxisY.MajorGrid.LineWidth = 0;
-            chartArea3.Name = "ChartArea1";
-            this.chPlots.ChartAreas.Add(chartArea3);
+            chartArea2.AxisX.MajorGrid.LineWidth = 0;
+            chartArea2.AxisY.MajorGrid.LineWidth = 0;
+            chartArea2.Name = "ChartArea1";
+            this.chPlots.ChartAreas.Add(chartArea2);
             this.chPlots.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend3.DockedToChartArea = "ChartArea1";
-            legend3.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Left;
-            legend3.Name = "Legend1";
-            this.chPlots.Legends.Add(legend3);
+            legend2.DockedToChartArea = "ChartArea1";
+            legend2.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Left;
+            legend2.Name = "Legend1";
+            this.chPlots.Legends.Add(legend2);
             this.chPlots.Location = new System.Drawing.Point(15, 0);
             this.chPlots.Name = "chPlots";
-            series3.BorderWidth = 2;
-            series3.ChartArea = "ChartArea1";
-            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series3.Font = new System.Drawing.Font("Times New Roman", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            series3.Legend = "Legend1";
-            series3.Name = "Series1";
-            series3.YValuesPerPoint = 6;
-            this.chPlots.Series.Add(series3);
+            series2.BorderWidth = 2;
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series2.Font = new System.Drawing.Font("Times New Roman", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            series2.Legend = "Legend1";
+            series2.Name = "Series1";
+            series2.YValuesPerPoint = 6;
+            this.chPlots.Series.Add(series2);
             this.chPlots.Size = new System.Drawing.Size(715, 766);
             this.chPlots.TabIndex = 18;
             this.chPlots.Text = "chart1";
@@ -859,14 +879,14 @@
             this.dgvStats.AllowUserToDeleteRows = false;
             this.dgvStats.AllowUserToResizeRows = false;
             this.dgvStats.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvStats.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvStats.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dgvStats.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvStats.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.col_i,
@@ -883,8 +903,8 @@
             this.dgvStats.Location = new System.Drawing.Point(15, 0);
             this.dgvStats.Name = "dgvStats";
             this.dgvStats.ReadOnly = true;
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.dgvStats.RowsDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.dgvStats.RowsDefaultCellStyle = dataGridViewCellStyle4;
             this.dgvStats.RowTemplate.Height = 25;
             this.dgvStats.RowTemplate.ReadOnly = true;
             this.dgvStats.Size = new System.Drawing.Size(715, 766);
@@ -998,18 +1018,6 @@
             this.btnCollapseLeft.UseVisualStyleBackColor = true;
             this.btnCollapseLeft.Click += new System.EventHandler(this.btnCollapseLeft_Click);
             // 
-            // cbBandwidth
-            // 
-            this.cbBandwidth.AutoSize = true;
-            this.cbBandwidth.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbBandwidth.Location = new System.Drawing.Point(32, 170);
-            this.cbBandwidth.Name = "cbBandwidth";
-            this.cbBandwidth.Size = new System.Drawing.Size(89, 24);
-            this.cbBandwidth.TabIndex = 14;
-            this.cbBandwidth.Text = "Bandwidth";
-            this.cbBandwidth.UseVisualStyleBackColor = true;
-            this.cbBandwidth.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -1042,11 +1050,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbUserCount)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbC)).EndInit();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
             this.pRightPanel.ResumeLayout(false);
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
@@ -1134,6 +1142,7 @@
         private System.Windows.Forms.RadioButton rbMatrix;
         private System.Windows.Forms.Label lDistCount;
         private System.Windows.Forms.TrackBar tbDistCount;
-        public System.Windows.Forms.CheckBox cbBandwidth;
+        public System.Windows.Forms.CheckBox cbDistMessageCount;
+        public System.Windows.Forms.CheckBox cbEmailCount;
     }
 }

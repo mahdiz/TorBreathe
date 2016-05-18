@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BridgeDistribution
+namespace Bricks
 {
 	public class User : Node
 	{
@@ -28,18 +28,18 @@ namespace BridgeDistribution
         }
 
         private Dictionary<long, List<Zp>> BridgeShares = new Dictionary<long, List<Zp>>();
-        private List<int> distributorIds;
+        private List<long> distributorPseudonyms;
 
-        public User(List<int> distributorIds)
+        public User(List<long> distributorPseudonyms)
         {
-            this.distributorIds = distributorIds;
-            this.distributorIds.ForEach(d => Send(d, Id, MessageType.UserJoin));
+            this.distributorPseudonyms = distributorPseudonyms;
+            this.distributorPseudonyms.ForEach(d => SendEmail(d, null, MessageType.UserJoin));
         }
 
         public void Leave()
         {
             // Let all distributors know that I have leaved the protocol
-            distributorIds.ForEach(d => Send(d, Id, MessageType.UserLeave));
+            distributorPseudonyms.ForEach(d => SendEmail(d, Pseudonym, MessageType.UserLeave));
         }
 
         //public override void Receive<BrideAssignment>(int fromNode, BrideAssignment message, MessageType type)
@@ -47,37 +47,44 @@ namespace BridgeDistribution
         //    throw new NotImplementedException();
         //}
 
-        public override void Receive(int fromNode, object message, MessageType type)
+        public override void ReceiveEmail(long fromPseudonym, object message, MessageType type)
         {
-            if (type == MessageType.BridgeAssign)   // From a distributor: Here's a bridge id share for you.
+            if (type == MessageType.UserAssignments)   // From a distributor: Here's a list of bridge id share for you.
             {
-                int bridgeId = -1;
-                var ba = message as BridgeAssignMessage;
-
-                if (distributorIds.Count == 1)
-                    bridgeId = (int)ba.BridgeShare.Value;
+                var assignments = message as List<UserAssignment>;
+                if (distributorPseudonyms.Count == 1)
+                {
+                    foreach (var a in assignments)
+                        Bridges.Add(Simulator.GetNode<Bridge>((int)a.BridgeShare.Value));
+                }
                 else
                 {
-                    if (!BridgeShares.ContainsKey(ba.BridgePseudonym))
-                        BridgeShares[ba.BridgePseudonym] = new List<Zp>();
-
-                    BridgeShares[ba.BridgePseudonym].Add(ba.BridgeShare);
-
-                    if (BridgeShares[ba.BridgePseudonym].Count == distributorIds.Count)
+                    foreach (var a in assignments)
                     {
-                        bridgeId = (int)ShamirSharing.Reconstruct(BridgeShares[ba.BridgePseudonym],
-                            Simulator.PolynomialDegree, Simulator.Prime).Value;
+                        if (!BridgeShares.ContainsKey(a.BridgePseudonym))
+                            BridgeShares[a.BridgePseudonym] = new List<Zp>();
 
-                        Debug.Assert(Simulator.GetNodes<Bridge>().Any(b => b.Id == bridgeId), "Invalid bridge ID reconstructed from shares.");
-                        BridgeShares[ba.BridgePseudonym] = null;
+                        BridgeShares[a.BridgePseudonym].Add(a.BridgeShare);
+
+                        if (BridgeShares[a.BridgePseudonym].Count == distributorPseudonyms.Count)
+                        {
+                            // We have enough number of shares to reconstruct the bridge ID
+                            int bridgeId = (int)ShamirSharing.Reconstruct(BridgeShares[a.BridgePseudonym],
+                                Simulator.PolynomialDegree, Simulator.Prime).Value;
+
+                            Debug.Assert(Simulator.GetNodes<Bridge>().Any(b => b.Id == bridgeId), "Invalid bridge ID reconstructed from shares.");
+                            Bridges.Add(Simulator.GetNode<Bridge>(bridgeId));
+                            BridgeShares[a.BridgePseudonym] = null;
+                        }
                     }
                 }
-
-                if (bridgeId >= 0)
-                    Bridges.Add(Simulator.GetNode<Bridge>(bridgeId));
             }
-            else
-                throw new Exception("Invalid message received.");
+            else throw new Exception("Invalid message received.");
+        }
+
+        public override void Receive(int fromNode, object message, MessageType type)
+        {
+            throw new Exception("Invalid email received.");
         }
     }
 }
