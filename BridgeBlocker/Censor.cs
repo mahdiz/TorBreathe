@@ -55,14 +55,12 @@ namespace TorBricks
 			switch (AttackModel)
 			{
 				case AttackModel.Aggressive:
-					// Block all bridges learned by the corrupt users
-					CorruptUsers.ForEach(
-                        delegate(CorruptUser u)
-                        {
-                            foreach (var b in u.Bridges)
-                                b.Block();
-                        });
-					break;
+                    // Block all bridges learned by the corrupt users
+                    foreach (var u in CorruptUsers)
+                        foreach (var bridge in u.Bridges)
+                            bridge.Block();
+
+                    break;
 
 				case AttackModel.Prudent:
                     PrudentBlocking(threshold, repeatCount);
