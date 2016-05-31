@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BridgeDistribution
+namespace TorBricks
 {
 	public enum AttackModel
 	{
@@ -57,19 +57,16 @@ namespace BridgeDistribution
 			}
 		}
 
-        private void OnDistYield(int threshold, int repeatCount)
+        private void OnDistYield(double threshold, int repeatCount)
 		{
 			switch (AttackModel)
 			{
 				case AttackModel.Aggressive:
-					// Block all bridges learned by the corrupt users
-					CorruptUsers.ForEach(
-                        delegate(CorruptUser u)
-                        {
-                            foreach (var b in u.Bridges)
-                                b.Block();
-                        });
-					break;
+                    // Block all bridges learned by the corrupt users
+                    foreach (var u in CorruptUsers)
+                        foreach (var bridge in u.Bridges)
+                            bridge.Block();
+                    break;
 
 				case AttackModel.Prudent:
                     PrudentBlocking(threshold, repeatCount);
@@ -93,7 +90,7 @@ namespace BridgeDistribution
         /// This can be done by blocking exactly "threshold" bridges.
         /// </summary>
         /// <param name="threshold">Distributor's blocking threshold for proceeding to the next round.</param>
-        private void PrudentBlocking(int threshold, int repeatCount)
+        private void PrudentBlocking(double threshold, int repeatCount)
         {
             int numBlocked = 0;
             foreach (var u in CorruptUsers)

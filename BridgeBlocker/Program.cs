@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using BridgeDistribution;
+using TorBricks;
 
-namespace BridgeDistribution
+namespace TorBricks
 {
 	class Program
 	{

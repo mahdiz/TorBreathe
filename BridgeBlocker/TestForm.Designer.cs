@@ -1,38 +1,38 @@
-﻿namespace BridgeDistribution
+﻿namespace TorBricks
 {
-	partial class MainForm
-	{
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+    partial class MainForm
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing && (components != null))
-			{
-				components.Dispose();
-			}
-			base.Dispose(disposing);
-		}
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
 
-		#region Windows Form Designer generated code
+        #region Windows Form Designer generated code
 
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.pLeftPanel = new System.Windows.Forms.Panel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.rbAggressive = new System.Windows.Forms.RadioButton();
@@ -40,22 +40,24 @@
             this.lStochastic = new System.Windows.Forms.Label();
             this.rbPrudent = new System.Windows.Forms.RadioButton();
             this.tbStochastic = new System.Windows.Forms.TrackBar();
-            this.llPlotSettings = new System.Windows.Forms.LinkLabel();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.lBadCount = new System.Windows.Forms.Label();
-            this.tbBadCount = new System.Windows.Forms.TrackBar();
+            this.lDistCount = new System.Windows.Forms.Label();
+            this.tbDistCount = new System.Windows.Forms.TrackBar();
+            this.lCorruptCount = new System.Windows.Forms.Label();
+            this.tbCorruptCount = new System.Windows.Forms.TrackBar();
             this.lUserCount = new System.Windows.Forms.Label();
             this.tbUserCount = new System.Windows.Forms.TrackBar();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.rbMatrix = new System.Windows.Forms.RadioButton();
             this.rbBnb = new System.Windows.Forms.RadioButton();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.rbGridView = new System.Windows.Forms.RadioButton();
+            this.rbPlot = new System.Windows.Forms.RadioButton();
             this.btnStart = new System.Windows.Forms.Button();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.lc = new System.Windows.Forms.Label();
             this.tbC = new System.Windows.Forms.TrackBar();
             this.rbLegendLeft = new System.Windows.Forms.RadioButton();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.rbGridView = new System.Windows.Forms.RadioButton();
-            this.rbPlot = new System.Windows.Forms.RadioButton();
             this.splitterLeft = new System.Windows.Forms.Splitter();
             this.splitterRight = new System.Windows.Forms.Splitter();
             this.pRightPanel = new System.Windows.Forms.Panel();
@@ -100,17 +102,17 @@
             this.btnCollapseRight = new System.Windows.Forms.Button();
             this.pCollapseButtonLeft = new System.Windows.Forms.Panel();
             this.btnCollapseLeft = new System.Windows.Forms.Button();
-            this.rbMatrix = new System.Windows.Forms.RadioButton();
             this.pLeftPanel.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbStochastic)).BeginInit();
             this.groupBox3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.tbBadCount)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbDistCount)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCorruptCount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbUserCount)).BeginInit();
             this.groupBox2.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbC)).BeginInit();
-            this.groupBox4.SuspendLayout();
             this.pRightPanel.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.groupBox6.SuspendLayout();
@@ -126,16 +128,16 @@
             // pLeftPanel
             // 
             this.pLeftPanel.Controls.Add(this.groupBox1);
-            this.pLeftPanel.Controls.Add(this.llPlotSettings);
             this.pLeftPanel.Controls.Add(this.groupBox3);
             this.pLeftPanel.Controls.Add(this.groupBox2);
+            this.pLeftPanel.Controls.Add(this.groupBox4);
             this.pLeftPanel.Controls.Add(this.btnStart);
             this.pLeftPanel.Controls.Add(this.groupBox5);
             this.pLeftPanel.Dock = System.Windows.Forms.DockStyle.Left;
             this.pLeftPanel.Location = new System.Drawing.Point(0, 0);
             this.pLeftPanel.MinimumSize = new System.Drawing.Size(270, 500);
             this.pLeftPanel.Name = "pLeftPanel";
-            this.pLeftPanel.Size = new System.Drawing.Size(298, 778);
+            this.pLeftPanel.Size = new System.Drawing.Size(298, 766);
             this.pLeftPanel.TabIndex = 10;
             // 
             // groupBox1
@@ -162,7 +164,7 @@
             this.rbAggressive.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rbAggressive.Location = new System.Drawing.Point(12, 29);
             this.rbAggressive.Name = "rbAggressive";
-            this.rbAggressive.Size = new System.Drawing.Size(96, 24);
+            this.rbAggressive.Size = new System.Drawing.Size(102, 26);
             this.rbAggressive.TabIndex = 2;
             this.rbAggressive.TabStop = true;
             this.rbAggressive.Text = "Aggressive";
@@ -174,7 +176,7 @@
             this.rbStochastic.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rbStochastic.Location = new System.Drawing.Point(12, 59);
             this.rbStochastic.Name = "rbStochastic";
-            this.rbStochastic.Size = new System.Drawing.Size(92, 24);
+            this.rbStochastic.Size = new System.Drawing.Size(99, 26);
             this.rbStochastic.TabIndex = 3;
             this.rbStochastic.Text = "Stochastic:";
             this.rbStochastic.UseVisualStyleBackColor = true;
@@ -187,7 +189,7 @@
             this.lStochastic.Enabled = false;
             this.lStochastic.Location = new System.Drawing.Point(117, 84);
             this.lStochastic.Name = "lStochastic";
-            this.lStochastic.Size = new System.Drawing.Size(65, 20);
+            this.lStochastic.Size = new System.Drawing.Size(71, 22);
             this.lStochastic.TabIndex = 6;
             this.lStochastic.Text = "p = 0.800";
             // 
@@ -197,7 +199,7 @@
             this.rbPrudent.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rbPrudent.Location = new System.Drawing.Point(155, 29);
             this.rbPrudent.Name = "rbPrudent";
-            this.rbPrudent.Size = new System.Drawing.Size(73, 24);
+            this.rbPrudent.Size = new System.Drawing.Size(81, 26);
             this.rbPrudent.TabIndex = 3;
             this.rbPrudent.Text = "Prudent";
             this.rbPrudent.UseVisualStyleBackColor = true;
@@ -211,82 +213,99 @@
             this.tbStochastic.Maximum = 40;
             this.tbStochastic.Minimum = 16;
             this.tbStochastic.Name = "tbStochastic";
-            this.tbStochastic.Size = new System.Drawing.Size(273, 50);
+            this.tbStochastic.Size = new System.Drawing.Size(273, 56);
             this.tbStochastic.TabIndex = 5;
             this.tbStochastic.Value = 32;
             this.tbStochastic.ValueChanged += new System.EventHandler(this.tbStochastic_ValueChanged);
-            // 
-            // llPlotSettings
-            // 
-            this.llPlotSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.llPlotSettings.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.llPlotSettings.Location = new System.Drawing.Point(165, 529);
-            this.llPlotSettings.Name = "llPlotSettings";
-            this.llPlotSettings.Size = new System.Drawing.Size(130, 20);
-            this.llPlotSettings.TabIndex = 7;
-            this.llPlotSettings.TabStop = true;
-            this.llPlotSettings.Text = "Show plot settings";
-            this.llPlotSettings.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            this.llPlotSettings.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.llPlotSettings_LinkClicked);
             // 
             // groupBox3
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox3.Controls.Add(this.lBadCount);
-            this.groupBox3.Controls.Add(this.tbBadCount);
+            this.groupBox3.Controls.Add(this.lDistCount);
+            this.groupBox3.Controls.Add(this.tbDistCount);
+            this.groupBox3.Controls.Add(this.lCorruptCount);
+            this.groupBox3.Controls.Add(this.tbCorruptCount);
             this.groupBox3.Controls.Add(this.lUserCount);
             this.groupBox3.Controls.Add(this.tbUserCount);
             this.groupBox3.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox3.Location = new System.Drawing.Point(10, 256);
+            this.groupBox3.Location = new System.Drawing.Point(10, 258);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(285, 160);
+            this.groupBox3.Size = new System.Drawing.Size(285, 244);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Network Size";
             // 
-            // lBadCount
+            // lDistCount
             // 
-            this.lBadCount.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.lBadCount.AutoSize = true;
-            this.lBadCount.Location = new System.Drawing.Point(118, 86);
-            this.lBadCount.Name = "lBadCount";
-            this.lBadCount.Size = new System.Drawing.Size(42, 20);
-            this.lBadCount.TabIndex = 6;
-            this.lBadCount.Text = "t = 32";
+            this.lDistCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lDistCount.AutoSize = true;
+            this.lDistCount.Location = new System.Drawing.Point(13, 167);
+            this.lDistCount.Name = "lDistCount";
+            this.lDistCount.Size = new System.Drawing.Size(118, 22);
+            this.lDistCount.TabIndex = 8;
+            this.lDistCount.Text = "# Distributors = 6";
             // 
-            // tbBadCount
+            // tbDistCount
             // 
-            this.tbBadCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbBadCount.LargeChange = 2;
-            this.tbBadCount.Location = new System.Drawing.Point(6, 108);
-            this.tbBadCount.Maximum = 63;
-            this.tbBadCount.Minimum = 1;
-            this.tbBadCount.Name = "tbBadCount";
-            this.tbBadCount.Size = new System.Drawing.Size(273, 50);
-            this.tbBadCount.TabIndex = 5;
-            this.tbBadCount.Value = 32;
-            this.tbBadCount.ValueChanged += new System.EventHandler(this.tbT_ValueChanged);
+            this.tbDistCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbDistCount.LargeChange = 2;
+            this.tbDistCount.Location = new System.Drawing.Point(6, 190);
+            this.tbDistCount.Maximum = 30;
+            this.tbDistCount.Minimum = 1;
+            this.tbDistCount.Name = "tbDistCount";
+            this.tbDistCount.Size = new System.Drawing.Size(273, 56);
+            this.tbDistCount.TabIndex = 7;
+            this.tbDistCount.Value = 6;
+            this.tbDistCount.ValueChanged += new System.EventHandler(this.tbDistCount_ValueChanged);
+            // 
+            // lCorruptCount
+            // 
+            this.lCorruptCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lCorruptCount.AutoSize = true;
+            this.lCorruptCount.Location = new System.Drawing.Point(13, 100);
+            this.lCorruptCount.Name = "lCorruptCount";
+            this.lCorruptCount.Size = new System.Drawing.Size(145, 22);
+            this.lCorruptCount.TabIndex = 6;
+            this.lCorruptCount.Text = "# Corrupt Users = 32";
+            // 
+            // tbCorruptCount
+            // 
+            this.tbCorruptCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbCorruptCount.LargeChange = 2;
+            this.tbCorruptCount.Location = new System.Drawing.Point(6, 123);
+            this.tbCorruptCount.Maximum = 63;
+            this.tbCorruptCount.Name = "tbCorruptCount";
+            this.tbCorruptCount.Size = new System.Drawing.Size(273, 56);
+            this.tbCorruptCount.TabIndex = 5;
+            this.tbCorruptCount.Value = 32;
+            this.tbCorruptCount.ValueChanged += new System.EventHandler(this.tbT_ValueChanged);
             // 
             // lUserCount
             // 
-            this.lUserCount.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.lUserCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lUserCount.AutoSize = true;
-            this.lUserCount.Location = new System.Drawing.Point(118, 26);
+            this.lUserCount.Location = new System.Drawing.Point(13, 31);
             this.lUserCount.Name = "lUserCount";
-            this.lUserCount.Size = new System.Drawing.Size(46, 20);
+            this.lUserCount.Size = new System.Drawing.Size(93, 22);
             this.lUserCount.TabIndex = 6;
-            this.lUserCount.Text = "n = 64";
+            this.lUserCount.Text = "# Users = 64";
             // 
             // tbUserCount
             // 
-            this.tbUserCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbUserCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbUserCount.LargeChange = 2;
-            this.tbUserCount.Location = new System.Drawing.Point(6, 46);
+            this.tbUserCount.Location = new System.Drawing.Point(6, 53);
             this.tbUserCount.Maximum = 20;
             this.tbUserCount.Minimum = 3;
             this.tbUserCount.Name = "tbUserCount";
-            this.tbUserCount.Size = new System.Drawing.Size(273, 50);
+            this.tbUserCount.Size = new System.Drawing.Size(273, 56);
             this.tbUserCount.TabIndex = 5;
             this.tbUserCount.Value = 6;
             this.tbUserCount.ValueChanged += new System.EventHandler(this.tbN_ValueChanged);
@@ -298,12 +317,22 @@
             this.groupBox2.Controls.Add(this.rbMatrix);
             this.groupBox2.Controls.Add(this.rbBnb);
             this.groupBox2.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox2.Location = new System.Drawing.Point(10, 168);
+            this.groupBox2.Location = new System.Drawing.Point(10, 169);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(285, 81);
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Distributor Algorithm";
+            // 
+            // rbMatrix
+            // 
+            this.rbMatrix.AutoSize = true;
+            this.rbMatrix.Location = new System.Drawing.Point(174, 37);
+            this.rbMatrix.Name = "rbMatrix";
+            this.rbMatrix.Size = new System.Drawing.Size(70, 26);
+            this.rbMatrix.TabIndex = 2;
+            this.rbMatrix.Text = "Matrix";
+            this.rbMatrix.UseVisualStyleBackColor = true;
             // 
             // rbBnb
             // 
@@ -311,18 +340,53 @@
             this.rbBnb.Checked = true;
             this.rbBnb.Location = new System.Drawing.Point(12, 37);
             this.rbBnb.Name = "rbBnb";
-            this.rbBnb.Size = new System.Drawing.Size(112, 24);
+            this.rbBnb.Size = new System.Drawing.Size(122, 26);
             this.rbBnb.TabIndex = 2;
             this.rbBnb.TabStop = true;
             this.rbBnb.Text = "Balls and Bins";
             this.rbBnb.UseVisualStyleBackColor = true;
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox4.Controls.Add(this.rbGridView);
+            this.groupBox4.Controls.Add(this.rbPlot);
+            this.groupBox4.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox4.Location = new System.Drawing.Point(10, 631);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(285, 72);
+            this.groupBox4.TabIndex = 4;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Output";
+            // 
+            // rbGridView
+            // 
+            this.rbGridView.AutoSize = true;
+            this.rbGridView.Location = new System.Drawing.Point(152, 31);
+            this.rbGridView.Name = "rbGridView";
+            this.rbGridView.Size = new System.Drawing.Size(93, 26);
+            this.rbGridView.TabIndex = 2;
+            this.rbGridView.Text = "Grid View";
+            this.rbGridView.UseVisualStyleBackColor = true;
+            // 
+            // rbPlot
+            // 
+            this.rbPlot.AutoSize = true;
+            this.rbPlot.Location = new System.Drawing.Point(20, 31);
+            this.rbPlot.Name = "rbPlot";
+            this.rbPlot.Size = new System.Drawing.Size(55, 26);
+            this.rbPlot.TabIndex = 3;
+            this.rbPlot.Text = "Plot";
+            this.rbPlot.UseVisualStyleBackColor = true;
+            this.rbPlot.CheckedChanged += new System.EventHandler(this.rbPlot_CheckedChanged);
             // 
             // btnStart
             // 
             this.btnStart.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnStart.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnStart.Location = new System.Drawing.Point(27, 733);
+            this.btnStart.Location = new System.Drawing.Point(27, 721);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(245, 35);
             this.btnStart.TabIndex = 0;
@@ -337,9 +401,9 @@
             this.groupBox5.Controls.Add(this.lc);
             this.groupBox5.Controls.Add(this.tbC);
             this.groupBox5.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox5.Location = new System.Drawing.Point(10, 422);
+            this.groupBox5.Location = new System.Drawing.Point(10, 510);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(285, 94);
+            this.groupBox5.Size = new System.Drawing.Size(285, 113);
             this.groupBox5.TabIndex = 4;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Repeats";
@@ -348,22 +412,22 @@
             // 
             this.lc.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.lc.AutoSize = true;
-            this.lc.Location = new System.Drawing.Point(118, 20);
+            this.lc.Location = new System.Drawing.Point(8, 32);
             this.lc.Name = "lc";
-            this.lc.Size = new System.Drawing.Size(39, 20);
+            this.lc.Size = new System.Drawing.Size(143, 22);
             this.lc.TabIndex = 20;
-            this.lc.Text = "c = 1";
+            this.lc.Text = "# Repeats = 3*log(n)";
             // 
             // tbC
             // 
             this.tbC.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.tbC.LargeChange = 2;
-            this.tbC.Location = new System.Drawing.Point(6, 41);
+            this.tbC.Location = new System.Drawing.Point(6, 57);
             this.tbC.Maximum = 20;
             this.tbC.Name = "tbC";
-            this.tbC.Size = new System.Drawing.Size(273, 50);
+            this.tbC.Size = new System.Drawing.Size(273, 56);
             this.tbC.TabIndex = 7;
-            this.tbC.Value = 1;
+            this.tbC.Value = 3;
             this.tbC.ValueChanged += new System.EventHandler(this.tbC_ValueChanged);
             // 
             // rbLegendLeft
@@ -372,53 +436,18 @@
             this.rbLegendLeft.Checked = true;
             this.rbLegendLeft.Location = new System.Drawing.Point(85, 120);
             this.rbLegendLeft.Name = "rbLegendLeft";
-            this.rbLegendLeft.Size = new System.Drawing.Size(48, 24);
+            this.rbLegendLeft.Size = new System.Drawing.Size(55, 27);
             this.rbLegendLeft.TabIndex = 3;
             this.rbLegendLeft.TabStop = true;
             this.rbLegendLeft.Text = "Left";
             this.rbLegendLeft.UseVisualStyleBackColor = true;
             this.rbLegendLeft.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
-            // groupBox4
-            // 
-            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox4.Controls.Add(this.rbGridView);
-            this.groupBox4.Controls.Add(this.rbPlot);
-            this.groupBox4.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox4.Location = new System.Drawing.Point(3, 3);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(266, 72);
-            this.groupBox4.TabIndex = 4;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Output";
-            // 
-            // rbGridView
-            // 
-            this.rbGridView.AutoSize = true;
-            this.rbGridView.Location = new System.Drawing.Point(152, 31);
-            this.rbGridView.Name = "rbGridView";
-            this.rbGridView.Size = new System.Drawing.Size(85, 24);
-            this.rbGridView.TabIndex = 2;
-            this.rbGridView.Text = "Grid View";
-            this.rbGridView.UseVisualStyleBackColor = true;
-            // 
-            // rbPlot
-            // 
-            this.rbPlot.AutoSize = true;
-            this.rbPlot.Location = new System.Drawing.Point(20, 31);
-            this.rbPlot.Name = "rbPlot";
-            this.rbPlot.Size = new System.Drawing.Size(50, 24);
-            this.rbPlot.TabIndex = 3;
-            this.rbPlot.Text = "Plot";
-            this.rbPlot.UseVisualStyleBackColor = true;
-            this.rbPlot.CheckedChanged += new System.EventHandler(this.rbPlot_CheckedChanged);
-            // 
             // splitterLeft
             // 
             this.splitterLeft.Location = new System.Drawing.Point(298, 0);
             this.splitterLeft.Name = "splitterLeft";
-            this.splitterLeft.Size = new System.Drawing.Size(3, 778);
+            this.splitterLeft.Size = new System.Drawing.Size(3, 766);
             this.splitterLeft.TabIndex = 0;
             this.splitterLeft.TabStop = false;
             // 
@@ -427,7 +456,7 @@
             this.splitterRight.Dock = System.Windows.Forms.DockStyle.Right;
             this.splitterRight.Location = new System.Drawing.Point(1046, 0);
             this.splitterRight.Name = "splitterRight";
-            this.splitterRight.Size = new System.Drawing.Size(3, 778);
+            this.splitterRight.Size = new System.Drawing.Size(3, 766);
             this.splitterRight.TabIndex = 16;
             this.splitterRight.TabStop = false;
             // 
@@ -436,11 +465,10 @@
             this.pRightPanel.Controls.Add(this.groupBox7);
             this.pRightPanel.Controls.Add(this.groupBox6);
             this.pRightPanel.Controls.Add(this.btnSave);
-            this.pRightPanel.Controls.Add(this.groupBox4);
             this.pRightPanel.Dock = System.Windows.Forms.DockStyle.Right;
             this.pRightPanel.Location = new System.Drawing.Point(1049, 0);
             this.pRightPanel.Name = "pRightPanel";
-            this.pRightPanel.Size = new System.Drawing.Size(280, 778);
+            this.pRightPanel.Size = new System.Drawing.Size(280, 766);
             this.pRightPanel.TabIndex = 13;
             // 
             // groupBox7
@@ -457,7 +485,7 @@
             this.groupBox7.Controls.Add(this.label1);
             this.groupBox7.Controls.Add(this.cbLegend);
             this.groupBox7.Controls.Add(this.rbLegendLeft);
-            this.groupBox7.Location = new System.Drawing.Point(7, 523);
+            this.groupBox7.Location = new System.Drawing.Point(7, 511);
             this.groupBox7.Name = "groupBox7";
             this.groupBox7.Size = new System.Drawing.Size(259, 191);
             this.groupBox7.TabIndex = 5;
@@ -469,7 +497,7 @@
             this.cbLogY.AutoSize = true;
             this.cbLogY.Location = new System.Drawing.Point(179, 63);
             this.cbLogY.Name = "cbLogY";
-            this.cbLogY.Size = new System.Drawing.Size(37, 24);
+            this.cbLogY.Size = new System.Drawing.Size(41, 27);
             this.cbLogY.TabIndex = 23;
             this.cbLogY.Text = "Y";
             this.cbLogY.UseVisualStyleBackColor = true;
@@ -480,7 +508,7 @@
             this.cboGridY.AutoSize = true;
             this.cboGridY.Location = new System.Drawing.Point(85, 35);
             this.cboGridY.Name = "cboGridY";
-            this.cboGridY.Size = new System.Drawing.Size(87, 24);
+            this.cboGridY.Size = new System.Drawing.Size(101, 27);
             this.cboGridY.TabIndex = 20;
             this.cboGridY.Text = "Horizontal";
             this.cboGridY.UseVisualStyleBackColor = true;
@@ -493,7 +521,7 @@
             this.label2.Enabled = false;
             this.label2.Location = new System.Drawing.Point(12, 64);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(64, 20);
+            this.label2.Size = new System.Drawing.Size(73, 23);
             this.label2.TabIndex = 21;
             this.label2.Text = "Log axis:";
             // 
@@ -502,7 +530,7 @@
             this.rbLegendBottom.AutoSize = true;
             this.rbLegendBottom.Location = new System.Drawing.Point(179, 146);
             this.rbLegendBottom.Name = "rbLegendBottom";
-            this.rbLegendBottom.Size = new System.Drawing.Size(69, 24);
+            this.rbLegendBottom.Size = new System.Drawing.Size(78, 27);
             this.rbLegendBottom.TabIndex = 3;
             this.rbLegendBottom.Text = "Bottom";
             this.rbLegendBottom.UseVisualStyleBackColor = true;
@@ -515,7 +543,7 @@
             this.label3.Enabled = false;
             this.label3.Location = new System.Drawing.Point(12, 94);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(59, 20);
+            this.label3.Size = new System.Drawing.Size(68, 23);
             this.label3.TabIndex = 21;
             this.label3.Text = "Legend:";
             // 
@@ -524,7 +552,7 @@
             this.cboGridX.AutoSize = true;
             this.cboGridX.Location = new System.Drawing.Point(179, 35);
             this.cboGridX.Name = "cboGridX";
-            this.cboGridX.Size = new System.Drawing.Size(72, 24);
+            this.cboGridX.Size = new System.Drawing.Size(83, 27);
             this.cboGridX.TabIndex = 20;
             this.cboGridX.Text = "Vertical";
             this.cboGridX.UseVisualStyleBackColor = true;
@@ -535,7 +563,7 @@
             this.rbLegendTop.AutoSize = true;
             this.rbLegendTop.Location = new System.Drawing.Point(85, 146);
             this.rbLegendTop.Name = "rbLegendTop";
-            this.rbLegendTop.Size = new System.Drawing.Size(50, 24);
+            this.rbLegendTop.Size = new System.Drawing.Size(58, 27);
             this.rbLegendTop.TabIndex = 3;
             this.rbLegendTop.Text = "Top";
             this.rbLegendTop.UseVisualStyleBackColor = true;
@@ -546,7 +574,7 @@
             this.cbLogX.AutoSize = true;
             this.cbLogX.Location = new System.Drawing.Point(85, 63);
             this.cbLogX.Name = "cbLogX";
-            this.cbLogX.Size = new System.Drawing.Size(36, 24);
+            this.cbLogX.Size = new System.Drawing.Size(42, 27);
             this.cbLogX.TabIndex = 22;
             this.cbLogX.Text = "X";
             this.cbLogX.UseVisualStyleBackColor = true;
@@ -557,7 +585,7 @@
             this.rbLegendRight.AutoSize = true;
             this.rbLegendRight.Location = new System.Drawing.Point(179, 120);
             this.rbLegendRight.Name = "rbLegendRight";
-            this.rbLegendRight.Size = new System.Drawing.Size(57, 24);
+            this.rbLegendRight.Size = new System.Drawing.Size(66, 27);
             this.rbLegendRight.TabIndex = 3;
             this.rbLegendRight.Text = "Right";
             this.rbLegendRight.UseVisualStyleBackColor = true;
@@ -570,7 +598,7 @@
             this.label1.Enabled = false;
             this.label1.Location = new System.Drawing.Point(12, 36);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(38, 20);
+            this.label1.Size = new System.Drawing.Size(43, 23);
             this.label1.TabIndex = 19;
             this.label1.Text = "Grid:";
             // 
@@ -581,7 +609,7 @@
             this.cbLegend.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbLegend.Location = new System.Drawing.Point(85, 93);
             this.cbLegend.Name = "cbLegend";
-            this.cbLegend.Size = new System.Drawing.Size(61, 24);
+            this.cbLegend.Size = new System.Drawing.Size(71, 27);
             this.cbLegend.TabIndex = 22;
             this.cbLegend.Text = "Show";
             this.cbLegend.UseVisualStyleBackColor = true;
@@ -604,9 +632,9 @@
             this.groupBox6.Controls.Add(this.rbMultipleRuns);
             this.groupBox6.Controls.Add(this.rbSingleRun);
             this.groupBox6.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox6.Location = new System.Drawing.Point(7, 84);
+            this.groupBox6.Location = new System.Drawing.Point(7, 3);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(262, 432);
+            this.groupBox6.Size = new System.Drawing.Size(262, 495);
             this.groupBox6.TabIndex = 0;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Experiment";
@@ -615,9 +643,9 @@
             // 
             this.lMarkerStep.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.lMarkerStep.AutoSize = true;
-            this.lMarkerStep.Location = new System.Drawing.Point(80, 355);
+            this.lMarkerStep.Location = new System.Drawing.Point(30, 391);
             this.lMarkerStep.Name = "lMarkerStep";
-            this.lMarkerStep.Size = new System.Drawing.Size(130, 20);
+            this.lMarkerStep.Size = new System.Drawing.Size(139, 22);
             this.lMarkerStep.TabIndex = 19;
             this.lMarkerStep.Text = "Plot marker step = 1";
             // 
@@ -626,21 +654,21 @@
             this.lBadCountMax.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.lBadCountMax.AutoSize = true;
             this.lBadCountMax.Enabled = false;
-            this.lBadCountMax.Location = new System.Drawing.Point(94, 290);
+            this.lBadCountMax.Location = new System.Drawing.Point(30, 321);
             this.lBadCountMax.Name = "lBadCountMax";
-            this.lBadCountMax.Size = new System.Drawing.Size(74, 20);
+            this.lBadCountMax.Size = new System.Drawing.Size(177, 22);
             this.lBadCountMax.TabIndex = 19;
-            this.lBadCountMax.Text = "t_max = 32";
+            this.lBadCountMax.Text = "Max # Corrupt Users = 32";
             // 
             // tbMarkerStep
             // 
             this.tbMarkerStep.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbMarkerStep.LargeChange = 2;
-            this.tbMarkerStep.Location = new System.Drawing.Point(25, 380);
+            this.tbMarkerStep.Location = new System.Drawing.Point(25, 416);
             this.tbMarkerStep.Maximum = 20;
             this.tbMarkerStep.Name = "tbMarkerStep";
-            this.tbMarkerStep.Size = new System.Drawing.Size(221, 50);
+            this.tbMarkerStep.Size = new System.Drawing.Size(221, 56);
             this.tbMarkerStep.TabIndex = 18;
             this.tbMarkerStep.Value = 1;
             this.tbMarkerStep.ValueChanged += new System.EventHandler(this.tbMarkerStep_ValueChanged);
@@ -651,11 +679,11 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbBadCountMax.Enabled = false;
             this.tbBadCountMax.LargeChange = 2;
-            this.tbBadCountMax.Location = new System.Drawing.Point(25, 315);
+            this.tbBadCountMax.Location = new System.Drawing.Point(25, 347);
             this.tbBadCountMax.Maximum = 63;
             this.tbBadCountMax.Minimum = 1;
             this.tbBadCountMax.Name = "tbBadCountMax";
-            this.tbBadCountMax.Size = new System.Drawing.Size(221, 50);
+            this.tbBadCountMax.Size = new System.Drawing.Size(221, 56);
             this.tbBadCountMax.TabIndex = 18;
             this.tbBadCountMax.Value = 32;
             this.tbBadCountMax.ValueChanged += new System.EventHandler(this.tbBadCountMax_ValueChanged);
@@ -666,9 +694,9 @@
             this.cbmm.Checked = true;
             this.cbmm.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbmm.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbmm.Location = new System.Drawing.Point(32, 258);
+            this.cbmm.Location = new System.Drawing.Point(32, 284);
             this.cbmm.Name = "cbmm";
-            this.cbmm.Size = new System.Drawing.Size(113, 24);
+            this.cbmm.Size = new System.Drawing.Size(120, 26);
             this.cbmm.TabIndex = 12;
             this.cbmm.Text = "Bridges used ";
             this.cbmm.UseVisualStyleBackColor = true;
@@ -680,11 +708,11 @@
             this.cbTime.Checked = true;
             this.cbTime.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbTime.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbTime.Location = new System.Drawing.Point(32, 228);
+            this.cbTime.Location = new System.Drawing.Point(32, 258);
             this.cbTime.Name = "cbTime";
-            this.cbTime.Size = new System.Drawing.Size(105, 24);
+            this.cbTime.Size = new System.Drawing.Size(81, 26);
             this.cbTime.TabIndex = 13;
-            this.cbTime.Text = "Running time";
+            this.cbTime.Text = "Latency";
             this.cbTime.UseVisualStyleBackColor = true;
             this.cbTime.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
@@ -694,9 +722,9 @@
             this.cbN.Checked = true;
             this.cbN.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbN.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbN.Location = new System.Drawing.Point(32, 159);
+            this.cbN.Location = new System.Drawing.Point(32, 143);
             this.cbN.Name = "cbN";
-            this.cbN.Size = new System.Drawing.Size(109, 24);
+            this.cbN.Size = new System.Drawing.Size(116, 26);
             this.cbN.TabIndex = 14;
             this.cbN.Text = "Bridges used";
             this.cbN.UseVisualStyleBackColor = true;
@@ -705,26 +733,22 @@
             // cbb
             // 
             this.cbb.AutoSize = true;
-            this.cbb.Checked = true;
-            this.cbb.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbb.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbb.Location = new System.Drawing.Point(32, 129);
+            this.cbb.Location = new System.Drawing.Point(32, 116);
             this.cbb.Name = "cbb";
-            this.cbb.Size = new System.Drawing.Size(128, 24);
+            this.cbb.Size = new System.Drawing.Size(134, 26);
             this.cbb.TabIndex = 15;
-            this.cbb.Text = "Blocked bridges";
+            this.cbb.Text = "Bridges blocked";
             this.cbb.UseVisualStyleBackColor = true;
             this.cbb.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // cbThirsty
             // 
             this.cbThirsty.AutoSize = true;
-            this.cbThirsty.Checked = true;
-            this.cbThirsty.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbThirsty.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbThirsty.Location = new System.Drawing.Point(32, 69);
+            this.cbThirsty.Location = new System.Drawing.Point(32, 62);
             this.cbThirsty.Name = "cbThirsty";
-            this.cbThirsty.Size = new System.Drawing.Size(103, 24);
+            this.cbThirsty.Size = new System.Drawing.Size(113, 26);
             this.cbThirsty.TabIndex = 16;
             this.cbThirsty.Text = "Thirsty users";
             this.cbThirsty.UseVisualStyleBackColor = true;
@@ -733,12 +757,10 @@
             // cbm
             // 
             this.cbm.AutoSize = true;
-            this.cbm.Checked = true;
-            this.cbm.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbm.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbm.Location = new System.Drawing.Point(32, 99);
+            this.cbm.Location = new System.Drawing.Point(32, 89);
             this.cbm.Name = "cbm";
-            this.cbm.Size = new System.Drawing.Size(141, 24);
+            this.cbm.Size = new System.Drawing.Size(149, 26);
             this.cbm.TabIndex = 17;
             this.cbm.Text = "Bridges distributed";
             this.cbm.UseVisualStyleBackColor = true;
@@ -748,11 +770,11 @@
             // 
             this.rbMultipleRuns.AutoSize = true;
             this.rbMultipleRuns.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rbMultipleRuns.Location = new System.Drawing.Point(11, 196);
+            this.rbMultipleRuns.Location = new System.Drawing.Point(11, 229);
             this.rbMultipleRuns.Name = "rbMultipleRuns";
-            this.rbMultipleRuns.Size = new System.Drawing.Size(248, 24);
+            this.rbMultipleRuns.Size = new System.Drawing.Size(189, 26);
             this.rbMultipleRuns.TabIndex = 10;
-            this.rbMultipleRuns.Text = "Multiple run (variable # corrupt users)";
+            this.rbMultipleRuns.Text = "Variable # Corrupt Users";
             this.rbMultipleRuns.UseVisualStyleBackColor = true;
             this.rbMultipleRuns.CheckedChanged += new System.EventHandler(this.rbMultipleRuns_CheckedChanged);
             // 
@@ -760,11 +782,11 @@
             // 
             this.rbSingleRun.AutoSize = true;
             this.rbSingleRun.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rbSingleRun.Location = new System.Drawing.Point(11, 37);
+            this.rbSingleRun.Location = new System.Drawing.Point(11, 32);
             this.rbSingleRun.Name = "rbSingleRun";
-            this.rbSingleRun.Size = new System.Drawing.Size(222, 24);
+            this.rbSingleRun.Size = new System.Drawing.Size(172, 26);
             this.rbSingleRun.TabIndex = 11;
-            this.rbSingleRun.Text = "Single run (fixed # corrupt users)";
+            this.rbSingleRun.Text = "Fixed # Corrupt Users";
             this.rbSingleRun.UseVisualStyleBackColor = true;
             this.rbSingleRun.CheckedChanged += new System.EventHandler(this.rbSingleRun_CheckedChanged);
             // 
@@ -773,7 +795,7 @@
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSave.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSave.Location = new System.Drawing.Point(27, 732);
+            this.btnSave.Location = new System.Drawing.Point(28, 721);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(227, 35);
             this.btnSave.TabIndex = 0;
@@ -790,33 +812,33 @@
             this.pOutputPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pOutputPanel.Location = new System.Drawing.Point(301, 0);
             this.pOutputPanel.Name = "pOutputPanel";
-            this.pOutputPanel.Size = new System.Drawing.Size(745, 778);
+            this.pOutputPanel.Size = new System.Drawing.Size(745, 766);
             this.pOutputPanel.TabIndex = 17;
             // 
             // chPlots
             // 
             this.chPlots.BorderlineColor = System.Drawing.Color.Black;
             this.chPlots.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea2.AxisX.MajorGrid.LineWidth = 0;
-            chartArea2.AxisY.MajorGrid.LineWidth = 0;
-            chartArea2.Name = "ChartArea1";
-            this.chPlots.ChartAreas.Add(chartArea2);
+            chartArea1.AxisX.MajorGrid.LineWidth = 0;
+            chartArea1.AxisY.MajorGrid.LineWidth = 0;
+            chartArea1.Name = "ChartArea1";
+            this.chPlots.ChartAreas.Add(chartArea1);
             this.chPlots.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend2.DockedToChartArea = "ChartArea1";
-            legend2.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Left;
-            legend2.Name = "Legend1";
-            this.chPlots.Legends.Add(legend2);
+            legend1.DockedToChartArea = "ChartArea1";
+            legend1.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Left;
+            legend1.Name = "Legend1";
+            this.chPlots.Legends.Add(legend1);
             this.chPlots.Location = new System.Drawing.Point(15, 0);
             this.chPlots.Name = "chPlots";
-            series2.BorderWidth = 2;
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series2.Font = new System.Drawing.Font("Times New Roman", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            series2.Legend = "Legend1";
-            series2.Name = "Series1";
-            series2.YValuesPerPoint = 6;
-            this.chPlots.Series.Add(series2);
-            this.chPlots.Size = new System.Drawing.Size(715, 778);
+            series1.BorderWidth = 2;
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series1.Font = new System.Drawing.Font("Times New Roman", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            series1.YValuesPerPoint = 6;
+            this.chPlots.Series.Add(series1);
+            this.chPlots.Size = new System.Drawing.Size(715, 766);
             this.chPlots.TabIndex = 18;
             this.chPlots.Text = "chart1";
             this.chPlots.Visible = false;
@@ -828,14 +850,14 @@
             this.dgvStats.AllowUserToDeleteRows = false;
             this.dgvStats.AllowUserToResizeRows = false;
             this.dgvStats.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvStats.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Arial Narrow", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvStats.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvStats.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvStats.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.col_i,
@@ -852,11 +874,11 @@
             this.dgvStats.Location = new System.Drawing.Point(15, 0);
             this.dgvStats.Name = "dgvStats";
             this.dgvStats.ReadOnly = true;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.dgvStats.RowsDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.dgvStats.RowsDefaultCellStyle = dataGridViewCellStyle2;
             this.dgvStats.RowTemplate.Height = 25;
             this.dgvStats.RowTemplate.ReadOnly = true;
-            this.dgvStats.Size = new System.Drawing.Size(715, 778);
+            this.dgvStats.Size = new System.Drawing.Size(715, 766);
             this.dgvStats.TabIndex = 17;
             // 
             // col_i
@@ -929,7 +951,7 @@
             this.pCollapseButtonRight.Dock = System.Windows.Forms.DockStyle.Right;
             this.pCollapseButtonRight.Location = new System.Drawing.Point(730, 0);
             this.pCollapseButtonRight.Name = "pCollapseButtonRight";
-            this.pCollapseButtonRight.Size = new System.Drawing.Size(15, 778);
+            this.pCollapseButtonRight.Size = new System.Drawing.Size(15, 766);
             this.pCollapseButtonRight.TabIndex = 16;
             // 
             // btnCollapseRight
@@ -938,7 +960,7 @@
             this.btnCollapseRight.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCollapseRight.Location = new System.Drawing.Point(0, 0);
             this.btnCollapseRight.Name = "btnCollapseRight";
-            this.btnCollapseRight.Size = new System.Drawing.Size(15, 778);
+            this.btnCollapseRight.Size = new System.Drawing.Size(15, 766);
             this.btnCollapseRight.TabIndex = 0;
             this.btnCollapseRight.TabStop = false;
             this.btnCollapseRight.Text = ">>>";
@@ -951,7 +973,7 @@
             this.pCollapseButtonLeft.Dock = System.Windows.Forms.DockStyle.Left;
             this.pCollapseButtonLeft.Location = new System.Drawing.Point(0, 0);
             this.pCollapseButtonLeft.Name = "pCollapseButtonLeft";
-            this.pCollapseButtonLeft.Size = new System.Drawing.Size(15, 778);
+            this.pCollapseButtonLeft.Size = new System.Drawing.Size(15, 766);
             this.pCollapseButtonLeft.TabIndex = 13;
             // 
             // btnCollapseLeft
@@ -960,28 +982,18 @@
             this.btnCollapseLeft.Font = new System.Drawing.Font("Arial Narrow", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCollapseLeft.Location = new System.Drawing.Point(0, 0);
             this.btnCollapseLeft.Name = "btnCollapseLeft";
-            this.btnCollapseLeft.Size = new System.Drawing.Size(15, 778);
+            this.btnCollapseLeft.Size = new System.Drawing.Size(15, 766);
             this.btnCollapseLeft.TabIndex = 0;
             this.btnCollapseLeft.TabStop = false;
             this.btnCollapseLeft.Text = "<<<";
             this.btnCollapseLeft.UseVisualStyleBackColor = true;
             this.btnCollapseLeft.Click += new System.EventHandler(this.btnCollapseLeft_Click);
             // 
-            // rbMatrix
-            // 
-            this.rbMatrix.AutoSize = true;
-            this.rbMatrix.Location = new System.Drawing.Point(174, 37);
-            this.rbMatrix.Name = "rbMatrix";
-            this.rbMatrix.Size = new System.Drawing.Size(62, 24);
-            this.rbMatrix.TabIndex = 2;
-            this.rbMatrix.Text = "Matrix";
-            this.rbMatrix.UseVisualStyleBackColor = true;
-            // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 22F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1329, 778);
+            this.ClientSize = new System.Drawing.Size(1329, 766);
             this.Controls.Add(this.pOutputPanel);
             this.Controls.Add(this.splitterRight);
             this.Controls.Add(this.pRightPanel);
@@ -1004,15 +1016,16 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbStochastic)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.tbBadCount)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbDistCount)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCorruptCount)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbUserCount)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbC)).EndInit();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
             this.pRightPanel.ResumeLayout(false);
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
@@ -1027,14 +1040,14 @@
             this.pCollapseButtonLeft.ResumeLayout(false);
             this.ResumeLayout(false);
 
-		}
+        }
 
-		#endregion
+        #endregion
 
         private System.Windows.Forms.Panel pLeftPanel;
         private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.Label lBadCount;
-        private System.Windows.Forms.TrackBar tbBadCount;
+        private System.Windows.Forms.Label lCorruptCount;
+        private System.Windows.Forms.TrackBar tbCorruptCount;
         private System.Windows.Forms.Label lUserCount;
         private System.Windows.Forms.TrackBar tbUserCount;
         private System.Windows.Forms.GroupBox groupBox1;
@@ -1085,7 +1098,6 @@
         private System.Windows.Forms.CheckBox cboGridY;
         private System.Windows.Forms.CheckBox cboGridX;
         public System.Windows.Forms.Label label1;
-        private System.Windows.Forms.LinkLabel llPlotSettings;
         private System.Windows.Forms.RadioButton rbStochastic;
         private System.Windows.Forms.TrackBar tbStochastic;
         private System.Windows.Forms.Label lStochastic;
@@ -1099,5 +1111,7 @@
         private System.Windows.Forms.CheckBox cbLegend;
         private System.Windows.Forms.GroupBox groupBox7;
         private System.Windows.Forms.RadioButton rbMatrix;
+        private System.Windows.Forms.Label lDistCount;
+        private System.Windows.Forms.TrackBar tbDistCount;
     }
 }

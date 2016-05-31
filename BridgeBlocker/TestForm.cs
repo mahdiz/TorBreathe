@@ -14,11 +14,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 
-namespace BridgeDistribution
+namespace TorBricks
 {
 	public partial class MainForm : Form
 	{
-        private const int defaultN = 4096;         // default number of users (must be >= 4)
+        private const int defaultN = 65536;         // default number of users (must be >= 4)
         private const int plotMarkerSize = 15;
         private const int plotThickness = 6;
         private bool stopped = true;
@@ -60,7 +60,11 @@ namespace BridgeDistribution
                 blockedSoFar = 0;
                 User.Reset();
                 Bridge.Reset();
-                Application.DoEvents();
+
+                #region UI Initialization
+                btnStart.Text = "Stop";
+                cbLogY.Enabled = false;
+                stopped = stopRequest = exitRequest = logIncConsidered = false;
 
                 // Set up plots
                 chPlots.Series.Add(new Series(cbThirsty.Text));
@@ -90,16 +94,17 @@ namespace BridgeDistribution
                 chPlots.Series[2].MarkerStyle = MarkerStyle.Diamond;
                 chPlots.Series[3].MarkerStyle = MarkerStyle.Circle;
 
-                chPlots.Series[4].Color = chPlots.Series[2].Color;
-                chPlots.Series[4].MarkerStyle = MarkerStyle.Circle;
-                chPlots.Series[5].Color = chPlots.Series[3].Color;
-                chPlots.Series[5].MarkerStyle = MarkerStyle.Square;
+                chPlots.Series[5].Color = chPlots.Series[2].Color;
+                chPlots.Series[5].MarkerStyle = MarkerStyle.Circle;
+
                 UpdatePlots();
+                Application.DoEvents();
+                #endregion
 
                 int n = (int)Math.Pow(2, tbUserCount.Value);
-                int t_max = rbMultipleRuns.Checked ? t_max = tbBadCountMax.Value : tbBadCount.Value + 1;
+                int t_max = rbMultipleRuns.Checked ? t_max = tbBadCountMax.Value : tbCorruptCount.Value + 1;
 
-                for (int t = tbBadCount.Value; t < t_max && !stopRequest; t++)
+                for (int t = tbCorruptCount.Value; t < t_max && !stopRequest; t++)
                 {
                     var d = new Distributor(rbBnb.Checked ? DistributeAlgorithm.BallsAndBins : DistributeAlgorithm.Matrix, 123);
 
@@ -171,58 +176,6 @@ namespace BridgeDistribution
             return stopRequest;
         }
 
-        private void tbN_ValueChanged(object sender, EventArgs e)
-        {
-            var n = 1 << tbUserCount.Value;
-            lUserCount.Text = "n = " + n;
-            tbBadCount.TickFrequency = tbBadCountMax.TickFrequency = (n - 1) / (int)Math.Log(n - 1, 2);
-            tbBadCount.Maximum = tbBadCountMax.Maximum = n - 1;
-            tbBadCount.Value = tbBadCountMax.Value = n / 2;
-            lBadCount.Text = "t = " + tbBadCount.Value;
-        }
-
-        private void tbT_ValueChanged(object sender, EventArgs e)
-        {
-            lBadCount.Text = "t = " + tbBadCount.Value;
-            if (tbBadCount.Value > tbBadCountMax.Value)
-                tbBadCountMax.Value = tbBadCount.Value;
-        }
-
-        private void tbC_ValueChanged(object sender, EventArgs e)
-        {
-            lc.Text = "c = " + tbC.Value;
-        }
-
-        private void btnCollapseLeft_Click(object sender, EventArgs e)
-        {
-            btnCollapseLeft.Enabled = false;
-            pLeftPanel.Visible = !pLeftPanel.Visible;
-            if (pLeftPanel.Visible)
-                btnCollapseLeft.Text = "<<<";       // Panel is open
-            else
-                btnCollapseLeft.Text = ">>>";       // Panel is closed
-
-            btnCollapseLeft.Enabled = true;
-        }
-
-        private void btnCollapseRight_Click(object sender, EventArgs e)
-        {
-            btnCollapseRight.Enabled = false;
-            pRightPanel.Visible = !pRightPanel.Visible;
-            if (pRightPanel.Visible)
-            {
-                btnCollapseRight.Text = ">>>";      // Panel is open
-                llPlotSettings.Text = "Hide plot settings";
-            }
-            else
-            {
-                btnCollapseRight.Text = "<<<";      // Panel is closed
-                llPlotSettings.Text = "Show plot settings";
-            }
-
-            btnCollapseRight.Enabled = true;
-        }
-
         public void UpdatePlots()
         {
             if (chPlots.Series.Count > 0)
@@ -239,7 +192,7 @@ namespace BridgeDistribution
                 chPlots.ChartAreas[0].AxisY.IsLogarithmic = cbLogY.Checked;
                 chPlots.Legends[0].Enabled = cbLegend.Checked;
 
-                chPlots.Legends[0].Docking = rbLegendLeft.Checked ? Docking.Left : 
+                chPlots.Legends[0].Docking = rbLegendLeft.Checked ? Docking.Left :
                     rbLegendRight.Checked ? Docking.Right : rbLegendTop.Checked ? Docking.Top : Docking.Bottom;
 
                 if (rbSingleRun.Checked)
@@ -248,7 +201,7 @@ namespace BridgeDistribution
                 {
                     chPlots.ChartAreas[0].AxisX.Title = "Number of corrupt users";
                     if (cbTime.Checked && !cbmm.Checked)
-                        chPlots.ChartAreas[0].AxisY.Title = "Running time";
+                        chPlots.ChartAreas[0].AxisY.Title = "Latency";
                     else if (!cbTime.Checked && cbmm.Checked)
                         chPlots.ChartAreas[0].AxisY.Title = "Number of bridges used";
                     else
@@ -259,31 +212,43 @@ namespace BridgeDistribution
             }
         }
 
-        private void rbPlot_CheckedChanged(object sender, EventArgs e)
+        #region User Interface Event Handlers
+
+        private void tbN_ValueChanged(object sender, EventArgs e)
         {
-            dgvStats.Visible = rbGridView.Checked;
-            chPlots.Visible = !rbGridView.Checked;
+            var n = 1 << tbUserCount.Value;
+            lUserCount.Text = "# Users = " + n;
+            tbCorruptCount.TickFrequency = tbBadCountMax.TickFrequency = (n - 1) / (int)Math.Log(n - 1, 2);
+            tbCorruptCount.Maximum = tbBadCountMax.Maximum = n - 1;
+            tbCorruptCount.Value = tbBadCountMax.Value = n / 8;
+            lCorruptCount.Text = "t = " + tbCorruptCount.Value;
         }
 
-        private void rbSingleRun_CheckedChanged(object sender, EventArgs e)
+        private void tbT_ValueChanged(object sender, EventArgs e)
         {
-            cbThirsty.Enabled = cbm.Enabled = cbb.Enabled = cbN.Enabled = rbSingleRun.Checked;
-            cbTime.Enabled = cbmm.Enabled = tbBadCountMax.Enabled = lBadCountMax.Enabled = !rbSingleRun.Checked;
+            lCorruptCount.Text = "# Corrupt Users = " + tbCorruptCount.Value;
+            if (tbCorruptCount.Value > tbBadCountMax.Value)
+                tbBadCountMax.Value = tbCorruptCount.Value;
         }
 
-        private void rbMultipleRuns_CheckedChanged(object sender, EventArgs e)
+        private void tbC_ValueChanged(object sender, EventArgs e)
         {
-            rbSingleRun_CheckedChanged(sender, e);
+            if (tbC.Value == 0)
+                lc.Text = "# Repeats = 1";
+            else if (tbC.Value == 1)
+                lc.Text = "# Repeats = log(n)";
+            else
+                lc.Text = "# Repeats = " + tbC.Value + "*log(n)";
         }
 
         private void tbBadCountMax_ValueChanged(object sender, EventArgs e)
         {
-            lBadCountMax.Text = "t_max = " + tbBadCountMax.Value;
+            lBadCountMax.Text = "Max # Corrupt Users = " + tbBadCountMax.Value;
         }
 
-        private void cb_CheckedChanged(object sender, EventArgs e)
+        private void tbDistCount_ValueChanged(object sender, EventArgs e)
         {
-            UpdatePlots();
+            lDistCount.Text = "# Distributors = " + tbDistCount.Value;
         }
 
         private void tbMarkerStep_ValueChanged(object sender, EventArgs e)
@@ -306,6 +271,52 @@ namespace BridgeDistribution
             }
         }
 
+        private void btnCollapseLeft_Click(object sender, EventArgs e)
+        {
+            btnCollapseLeft.Enabled = false;
+            pLeftPanel.Visible = !pLeftPanel.Visible;
+            if (pLeftPanel.Visible)
+                btnCollapseLeft.Text = "<<<";       // Panel is open
+            else
+                btnCollapseLeft.Text = ">>>";       // Panel is closed
+
+            btnCollapseLeft.Enabled = true;
+        }
+
+        private void btnCollapseRight_Click(object sender, EventArgs e)
+        {
+            btnCollapseRight.Enabled = false;
+            pRightPanel.Visible = !pRightPanel.Visible;
+            if (pRightPanel.Visible)
+                btnCollapseRight.Text = ">>>";      // Panel is open
+            else
+                btnCollapseRight.Text = "<<<";      // Panel is closed
+
+            btnCollapseRight.Enabled = true;
+        }
+
+        private void rbPlot_CheckedChanged(object sender, EventArgs e)
+        {
+            dgvStats.Visible = rbGridView.Checked;
+            chPlots.Visible = !rbGridView.Checked;
+        }
+
+        private void rbSingleRun_CheckedChanged(object sender, EventArgs e)
+        {
+            cbThirsty.Enabled = cbm.Enabled = cbb.Enabled = cbN.Enabled = rbSingleRun.Checked;
+            cbTime.Enabled = cbmm.Enabled = tbBadCountMax.Enabled = lBadCountMax.Enabled = !rbSingleRun.Checked;
+        }
+
+        private void rbMultipleRuns_CheckedChanged(object sender, EventArgs e)
+        {
+            rbSingleRun_CheckedChanged(sender, e);
+        }
+
+        private void cb_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdatePlots();
+        }
+
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (!stopped)
@@ -317,7 +328,7 @@ namespace BridgeDistribution
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            var saveDialog = new SaveFileDialog() 
+            var saveDialog = new SaveFileDialog()
             {
                 FileName = "plot.emf",
                 Filter = "EMF files|*.emf|WMF files|*.wmf|PNG files|*.png|JPEG files|*.jpg|GIF files|*.gif|BMP files|*.bmp|All files (*.*)|*.*",
@@ -415,8 +426,8 @@ namespace BridgeDistribution
 
         private void chPlots_MouseMove(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left && e.X > 0 && e.Y > 0 && 
-                e.X < chPlots.Width - chPlots.Legends[0].Position.Width - 200 && 
+            if (e.Button == MouseButtons.Left && e.X > 0 && e.Y > 0 &&
+                e.X < chPlots.Width - chPlots.Legends[0].Position.Width - 200 &&
                 e.Y < chPlots.Height - chPlots.Legends[0].Position.Height - 100)
             {
                 chPlots.Legends[0].Position.X = (int)((double)e.X / chPlots.Width * 100.0);
@@ -435,6 +446,7 @@ namespace BridgeDistribution
             }
             logIncConsidered = (incdec >= 0);
             UpdatePlots();
-        }        
+        }
+        #endregion
     }
 }

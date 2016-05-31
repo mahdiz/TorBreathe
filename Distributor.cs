@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BridgeDistribution
+namespace TorBricks
 {
-	public delegate void YieldHandler(int threshold, int repeatCount);
+	public delegate void YieldHandler(double threshold, int repeatCount);
 	public delegate bool RoundEndHandler(int round, UserList users, List<Bridge>[] bridges);
     public delegate void Distribute(List<Bridge> B);
 
@@ -18,10 +18,10 @@ namespace BridgeDistribution
         Matrix,
     }
 
-	public class Distributor
-	{
+    public class Distributor
+    {
         public DistributeAlgorithm Algorithm { get; private set; }
-		public event YieldHandler OnYield;
+        public event YieldHandler OnYield;
         public event RoundEndHandler OnRoundEnd;
         public UserList Users { get; private set; }
 
@@ -35,36 +35,36 @@ namespace BridgeDistribution
         /// <summary>
         /// A function that calculates the round threshold for the number of bridges blocked in each round.
         /// </summary>
-        private Func<int, int> threshold;
+        private Func<int, double> threshold;
 
         /// <summary>
         /// A function that calculates the number of bridges to be distributed in each round.
         /// </summary>
         private Func<int, int> distCount;
 
-		public Distributor(DistributeAlgorithm method, int seed)
-		{
-			randGen = new Random(seed);
-			Users = new UserList();
-            
+        public Distributor(DistributeAlgorithm method, int seed)
+        {
+            randGen = new Random(seed);
+            Users = new UserList();
+
             switch (Algorithm = method)
             {
                 case DistributeAlgorithm.BallsAndBins:
                     Distribute = DistributeBnB;
-                    threshold = delegate(int i) { return (int)Math.Pow(2, i); };
-                    distCount = delegate(int i) { return (int)Math.Pow(2, i + 1); };
+                    threshold = delegate (int i) { return 0.6 * Math.Pow(2, i); };       // See the robustness lemma
+                    distCount = delegate (int i) { return (int)Math.Pow(2, i); };
                     break;
 
                 case DistributeAlgorithm.Matrix:
                     Distribute = DistributeMatrix;
-                    threshold = delegate(int i) { return (int)Math.Pow(2, i); };
-                    distCount = delegate(int i) { return (int)Math.Pow(2, i + 1); };
+                    threshold = delegate (int i) { return Math.Pow(2, i); };
+                    distCount = delegate (int i) { return (int)Math.Pow(2, i + 1); };
                     break;
 
                 default:
                     throw new InvalidOperationException("Invalid distribution method!");
             }
-		}
+        }
 
         /// <summary>
         /// Runs the bridge distribution algorithm.
@@ -73,41 +73,43 @@ namespace BridgeDistribution
         public void Run(int c)
         {
             var repeatCount = c == 0 ? 1 : c * (int)Math.Ceiling(Math.Log(Users.Count, 2));
-			var bridges = new List<Bridge>[repeatCount];    // List of bridges distributed in each repeat
+			var repeatBridges = new List<Bridge>[repeatCount];    // List of bridges distributed in each repeat
 
             for (int j = 0; j < repeatCount; j++)
-                bridges[j] = new List<Bridge>();
+                repeatBridges[j] = new List<Bridge>();
 
-            int i = 0;              // Round number
+            int i = 4;              // Round number
             int n = Users.Count;    // Number of users
             bool stopped = false, stable = false;
 
 			while (!stopped & !stable)
 			{
                 // Calculate # of blocked bridges in each repeat and replace them with new bridges
-                var blockedCounts = bridges.Select(b => RecruitReplace(b));
-
+                var blockedCounts = new int[repeatCount];
+                for (int j = 0; j < repeatCount; j++)
+                    blockedCounts[j] = RecruitReplace(repeatBridges[j]);
+                
                 // Go to next round if in any of the repeats the number blocked bridges is >= the threshold
-                if (i == 0 || blockedCounts.Any(b => b >= threshold(i)))
+                if (i == 4 || blockedCounts.Any(b => b >= threshold(i)))
                 {
                     i = i + 1;
 
                     // Update the parameters
                     n = Users.Count;
-                    int m = distCount(i);       // Number of bridges distributed in current round (same for all repeats)
+                    int d = distCount(i);       // Number of bridges distributed in current round (same for all repeats)
 
-                    if (m * repeatCount < n)
+                    if (d * repeatCount < n)
                     {
                         for (int j = 0; j < repeatCount; j++)
                         {
-                            Debug.Assert(!bridges[j].Any(x => x.IsBlocked), "Can't distribute a blocked bridge.");
+                            Debug.Assert(!repeatBridges[j].Any(x => x.IsBlocked), "Can't distribute a blocked bridge.");
 
                             // Increased the number of unblocked bridges to m for each repeat
-                            var extraCount = m - bridges[j].Count;
+                            var extraCount = d - repeatBridges[j].Count;
                             for (int k = 0; k < extraCount; k++)
-                                bridges[j].Add(new Bridge());
+                                repeatBridges[j].Add(new Bridge());
 
-                            Distribute(bridges[j]);
+                            Distribute(repeatBridges[j]);
                         }
                     }
                     else
@@ -124,7 +126,7 @@ namespace BridgeDistribution
 
                     // Log the end of round
                     if (OnRoundEnd != null)
-                        stopped = OnRoundEnd(i, Users, bridges);
+                        stopped = OnRoundEnd(i, Users, repeatBridges);
                 }
                 else stable = true;
 			}
