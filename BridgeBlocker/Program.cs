@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Bricks;
+using TorBricks;
 
-namespace Bricks
+namespace TorBricks
 {
 	class Program
 	{

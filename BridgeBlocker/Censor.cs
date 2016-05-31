@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bricks
+namespace TorBricks
 {
 	public enum AttackModel
 	{
@@ -50,7 +50,7 @@ namespace Bricks
 			}
 		}
 
-        private void OnDistYield(int threshold, int repeatCount)
+        private void OnDistYield(double threshold, int repeatCount)
 		{
 			switch (AttackModel)
 			{
@@ -86,7 +86,7 @@ namespace Bricks
         /// This can be done by blocking exactly "threshold" bridges.
         /// </summary>
         /// <param name="threshold">Distributor's blocking threshold for proceeding to the next round.</param>
-        private void PrudentBlocking(int threshold, int repeatCount)
+        private void PrudentBlocking(double threshold, int repeatCount)
         {
             int numBlocked = 0;
             foreach (var u in CorruptUsers)

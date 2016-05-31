@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bricks
+namespace TorBricks
 {
     /// <summary>
     /// Represents an abstract network node capable of sending and receiving messages.

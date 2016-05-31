@@ -15,12 +15,12 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 
-namespace Bricks
+namespace TorBricks
 {
 	public partial class MainForm : Form
 	{
         private const int seed = 123;
-        private const int defaultUserCount = 32;
+        private const int defaultUserCount = 512;
         private const int defaultDistCount = 1;    
         private const int plotMarkerSize = 15;
         private const int plotThickness = 6;
@@ -140,7 +140,7 @@ namespace Bricks
                     // Create a sufficient number of bridges
                     repeatCount = tbC.Value == 0 ? 1 : tbC.Value * (int)Math.Ceiling(Math.Log(n, 2));
                     var bridges = new List<Bridge>();
-                    for (int i = 0; i < (8 * t - 2) * repeatCount; i++)
+                    for (int i = 0; i < (3.2 * t + 32) * repeatCount; i++)    // See the bridge cost lemma in the paper
                         bridges.Add(new Bridge(distIds));
 
                     leader.BridgePseudonyms = bridges.Select(b => b.Pseudonym).ToList();
@@ -291,7 +291,7 @@ namespace Bricks
                 {
                     chPlots.ChartAreas[0].AxisX.Title = "Number of corrupt users";
                     if (cbTime.Checked && !cbmm.Checked)
-                        chPlots.ChartAreas[0].AxisY.Title = "Running time";
+                        chPlots.ChartAreas[0].AxisY.Title = "Latency";
                     else if (!cbTime.Checked && cbmm.Checked)
                         chPlots.ChartAreas[0].AxisY.Title = "Number of bridges used";
                     else

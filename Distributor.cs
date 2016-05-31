@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bricks
+namespace TorBricks
 {
-	public delegate void YieldHandler(int threshold, int repeatCount);
+	public delegate void YieldHandler(double threshold, int repeatCount);
 	public delegate bool RoundEndHandler(int round, int bridgeCount, int blockedCount);
     public delegate void Distribute(List<long> bridges);
 
@@ -50,6 +50,8 @@ namespace Bricks
 
     public class Distributor : Node
     {
+        public List<long> BridgePseudonyms { protected get; set; }
+
         protected List<long> Users = new List<long>();
         protected Dictionary<long, Zp> BridgeShares = new Dictionary<long, Zp>();
 
@@ -80,7 +82,10 @@ namespace Bricks
             {
                 case MessageType.BridgeJoin:    // From a bridge: I'm joining the protocol.
                     var bj = message as BridgeJoinMessage;
+                    Debug.Assert(!BridgeShares.ContainsKey(bj.Pseudonym), "The bridge has already joined.");
+
                     BridgeShares[bj.Pseudonym] = bj.IdShare;
+                    BridgePseudonyms.Remove(bj.Pseudonym);
                     break;
 
                 case MessageType.UserJoin:      // From a user: I'm joining the protocol.
@@ -111,7 +116,6 @@ namespace Bricks
         /// The distribution method
         /// </summary>
         public Distribute Distribute;
-        public List<long> BridgePseudonyms { private get; set; }
 
         private Random randGen;
         private List<int> distributorIds;
@@ -121,7 +125,7 @@ namespace Bricks
         /// <summary>
         /// A function that calculates the round threshold for the number of bridges blocked in each round.
         /// </summary>
-        private Func<int, int> threshold;
+        private Func<int, double> threshold;
 
         /// <summary>
         /// A function that calculates the number of bridges to be distributed in each round.
@@ -138,13 +142,13 @@ namespace Bricks
             {
                 case DistributeAlgorithm.BallsAndBins:
                     Distribute = DistributeBnB;
-                    threshold = delegate(int i) { return (int)Math.Pow(2, i); };
+                    threshold = delegate(int i) { return 0.6 * Math.Pow(2, i); };       // See the robustness lemma
                     distCount = delegate(int i) { return (int)Math.Pow(2, i); };
                     break;
 
                 case DistributeAlgorithm.Matrix:
                     Distribute = DistributeMatrix;
-                    threshold = delegate(int i) { return (int)Math.Pow(2, i); };
+                    threshold = delegate(int i) { return Math.Pow(2, i); };
                     distCount = delegate(int i) { return (int)Math.Pow(2, i + 1); };
                     break;
 
@@ -162,7 +166,7 @@ namespace Bricks
             if (BridgePseudonyms == null)
                 throw new InvalidOperationException("Bridge pseudonyms must be set before running the protocol.");
 
-            int i = 0, d = 0;       // Round number, number of bridges distributed in the current round
+            int i = 0, d = 0;       // Round number, number of bridges distributed in the current round (i=4 gives a constant failure probability of ~10^-4)
             int n = Users.Count;    // Number of users
             bool stopped = false, stable = false, nextRound = true;
             var repeatBridges = new List<long>[repeatCount];      // List of bridges distributed in each repeat
@@ -184,15 +188,18 @@ namespace Bricks
                         if (BridgeShares.Count < d * repeatCount)
                             RecruitBridges(d * repeatCount - BridgeShares.Count);
 
+                        Debug.Assert(BridgeShares.Count == d * repeatCount, "Not enough bridges were recruited.");
+
+                        var bridgePseudonyms = BridgeShares.Keys.ToList();
                         for (int j = 0; j < repeatCount; j++)
                         {
-                            repeatBridges[j] = BridgeShares.Keys.ToList().GetRange(j * d, d);
+                            repeatBridges[j] = bridgePseudonyms.GetRange(j * d, d);
                             Distribute(repeatBridges[j]);
                         }
                     }
                     else
                     {
-                        // Give each user a fresh bridge that has never been assigned to any user
+                        // Give each user a unique fresh bridge that has never been assigned to any user
                         if (BridgeShares.Count < n)
                             RecruitBridges(n - BridgeShares.Count);
 
@@ -218,12 +225,14 @@ namespace Bricks
                 }
                 else stable = true;
 
-                // Calculate # of blocked bridges in each repeat
-                // Go to next round if in any of the repeats the number blocked bridges is >= the threshold.
-                var rbCounts = repeatBridges.Select(rb => rb.Intersect(blockedBridges).Count());
-                if (rbCounts.Any(rbCount => rbCount >= threshold(i)))
-                    nextRound = true;
-
+                if (!stable)
+                {
+                    // Calculate # of blocked bridges in each repeat
+                    // Go to next round if in any of the repeats the number blocked bridges is >= the threshold.
+                    var rbCounts = repeatBridges.Select(rb => rb.Intersect(blockedBridges).Count());
+                    if (rbCounts.Any(rbCount => rbCount >= threshold(i)))
+                        nextRound = true;
+                }
                 blockedBridges.Clear();
             }
         }
@@ -238,7 +247,7 @@ namespace Bricks
 
         private void RecruitBridges(int num)
         {
-            // Invite "num" bridges via the Pseudonym network to join the protocol.
+            // Invite "num" bridges via the pseudonym network to join the protocol.
             for (int i = 0; i < num; i++)
                 SendEmail(BridgePseudonyms[i], null, MessageType.JoinRequest);
         }

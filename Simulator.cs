@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bricks
+namespace TorBricks
 {
     public static class Simulator
     {

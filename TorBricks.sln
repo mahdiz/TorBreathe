@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simulator", "Simulator\Simu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{69DBFD0D-F203-4438-8E61-39DA6A29B181}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bricks", "Bricks.csproj", "{BCE8F776-516E-453D-92BC-9C11F4E83E29}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorBricks", "TorBricks.csproj", "{BCE8F776-516E-453D-92BC-9C11F4E83E29}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
