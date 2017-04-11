@@ -180,3 +180,20 @@ $RECYCLE.BIN/
 
 # Visual Studio 2014 CTP
 **/*.sln.ide
+
+# LaTex
+*.bbl
+*.blg
+*.aux
+*.idx
+*.log
+*.out
+*.synctex.gz
+*.lof
+*.lyx~
+*.toc
+*.upa
+*.upb
+.DS_Store
+*~
+*.o
