@@ -1,0 +1,26 @@
+https://metrics.torproject.org/
+https://ooni.torproject.org/reports/
+
+Detecting Blocked Bridge: Yeah, it's cheap and can be performed regularly.  And it can (arguably)
+be done in a way that doesn't reveal the bridges themselves.
+
+> Can we assume the fake bridges are realizable in practice with a
+> reasonable cost?
+
+Yes, all you would have to do is announce a fake IP address and port
+number
+
+I remember maybe 2-3 years ago hearing or reading somewhere that the
+following problem was something the Tor project was interested in:
+namely, an algorithm to distribute bridges so that the chances of a user
+receiving a working bridge is maximized and the probability of bridges
+getting blocked is minimized, with some other useful properties like
+finding out which gmail addresses are collecting bridges to block so
+those addresses can be blacklisted, and so on.
+
+Is this still a relevant problem that the Tor project is interested in
+seeing a theoretical (but hopefully realistic) analysis of?  (If coding
+up a new bridge distribution strategy based on the analysis were helpful
+we could do that, too.  Also, I realize that active probing and DPI are
+also problems for bridges, but I consider those to be separate
+problems.)

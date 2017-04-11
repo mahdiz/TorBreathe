@@ -1,0 +1,37 @@
+Review A:
+
+1-a. We've added one line to Algorithm 1 (between line 16 and 17) to count blocked bridges
+
+1-b. Algorithm 1 uses more bridges if there's more blocking until some point that it becomes more reasonable to give each user a unique bridge. This change in strategy is to prevent the exponential growth algorithm from becoming overkill.
+
+1-c. The bridges distributed across the 3*log(n) instances are disjoint. We've added a paragraph to the paper to make this clear.
+
+2. Each box in Figure 4 refers to one iteration of the while loop in Algorithm 1 (this is shown on the left side of the figure). We've added a sentence to the text to define an "iteration".
+
+3. In the with high probability example for t=180, the probability 1-(1-1/d_i)^t_i is for one instance. Since the algorithm is repeated 3*log(n) times, the correct probability is failure is at least 0.51^(3*log(180)) = 2.7*10^-7.
+
+4. This is because otherwise both the number of bridges used by the algorithm and the latency become smaller. As soon as the algorithm stops going to next round, it guarantees that *all* honest users can connect to Tor w.h.p.
+
+5. Reusing bridges can be seen as giving each bridge to more that one user. This seems to be necessary to make the total number of bridges used sublinear in n.
+
+6-8. We agree. The paper leaves these as open problem. We believe our current algorithm is a reasonable step towards its goals.
+
+
+Review B:
+1. n and t are defined in the abstract. Stochastic adversary -> Section 4 paragraph 2.
+
+2. This paper is mainly aimed at providing mathematical guarantees of reliability and privacy (third paragraph of Introduction). The preliminary evaluation results are provided to backup the mathematical proofs and are *not* the main results/merits of this paper.
+
+3. The third paragraph of Section 3.1 clearly states how i is synchronized.
+
+4. Lemma 3 formally defines the meaning of load-balancing.
+
+Review C:
+1. Added a background section to describe the algorithm in high-level.
+
+2. Trusted distributor (basic algorithm) is different from honest-but-curious (leader-based algorithm). In the latter, the privacy of users in user-bridge assignments are preserved while in the former the distributor sees all assignments.
+
+3. The first points in plots show values at the *end* of each round. Since the prudent adversary blocks only a minimum of bridges to force the algorithm to next round, most users receive good bridges and hence are not thirsty while the aggressive adversary starts by blocking all bridges.
+
+Review D:
+Although, the current algorithm is not completely practical due to its large bridge cost, we believe it makes an important step towards promising directions that we hope can eventually (in a 2-3 year timeframe) make it fully practical. Similar approaches with provable guarantees are far from being practical while TorBricks is *close* to becoming practical.

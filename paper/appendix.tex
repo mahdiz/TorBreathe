@@ -1,0 +1,19 @@
+%\begin{corollary}[Alternative form of Azuma's inequality] \label{cor:azumaAlter}
+%	Let $X_0,...,X_n$ be a martingale such that \[B_j \leq X_j - X_{j-1} \leq B_j + d_j,\] for some constants $d_j$ and for some random variables $B_j$ that may be functions of $X_0,X_1,...,X_{j-1}$. Then, for all $k\geq 0$ and any $\delta > 0$,
+%	\[\Pr\left(X_k \geq (1+\delta) X_0\right) \leq 2e^{-2\delta^2 X_0^2 / \left(\sum_{j=1}^{k} d_j^2\right)}.\]
+%\end{corollary}
+%\begin{proof}
+%	From~\cite[Theorem 12.6]{Michael2005}, we have
+%	\begin{align*}
+%		\Pr\left(|X_k - X_0| \geq \lambda \right) \leq 2e^{-2\lambda^2 / \left(\sum_{j=1}^{k} d_j^2\right)},
+%	\end{align*}
+%	for any $\lambda > 0$. This means
+%	\begin{align}
+%		\Pr\left(X_k \geq X_0 + \lambda \right) &\leq 2e^{-2\lambda^2 / \left(\sum_{j=1}^{k} d_j^2\right)}~\text{and} \label{eq:azumaUpper}\\
+%		\Pr\left(X_k \leq X_0 - \lambda \right) &\leq 2e^{-2\lambda^2 / \left(\sum_{j=1}^{k} d_j^2\right)}. 
+%	\end{align}
+%	By setting $\lambda = \delta X_0$ in~\eqref{eq:azumaUpper}, we get
+%	\begin{align*}
+%		\Pr\left(X_k \geq (1+\delta)X_0 \right) &\leq 2e^{-2\delta^2 X_0^2 / \left(\sum_{j=1}^{k} d_j^2\right)}.
+%	\end{align*}
+%\end{proof}
