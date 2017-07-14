@@ -1,0 +1,535 @@
+\documentclass{llncs}
+
+% FULL PAPER CONTROL -------------------
+\newif\iffullpaper
+\fullpaperfalse			% Change this to \fullpapertrue or \fullpaperfalse for full paper/short paper
+
+\iffullpaper
+\newcommand{\fullpaper}[1]{#1} 
+\else 
+\newcommand{\fullpaper}[1]{}
+\fi
+% -------------------------------------
+
+%\usepackage{sober}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage{url}
+\usepackage{color,xcolor,colortbl}
+\usepackage{algorithm,algorithmicx,algpseudocode}
+%\usepackage[mathscr]{euscript}		% DO NOT remove this line, otherwise some symbols may get overload!
+\usepackage{helvet}
+\usepackage{epstopdf}
+\usepackage{nicefrac}
+\usepackage{enumitem}
+%\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{xspace}
+
+\newcommand{\etal}{et~al.}
+\newcommand{\eg}{e.g.}
+\newcommand{\ie}{i.e.}
+\newcommand{\alg}[1]{\mbox{\textsf{#1}}}
+\newcommand{\view}[1]{\textsf{{\small VIEW}}_{#1}}
+\newcommand{\algFont}{\fontsize{10}{13}\selectfont}
+\newcommand{\E}{\mathbf{\mathrm{E}}}
+\algrenewcommand\textproc{\textsf}
+\newcommand{\todo}[1]{{\leavevmode\color{blue}[TODO: #1]}}
+
+%\newcommand{\jared}[1]{[{\bf Jared:\ } {\em #1}]}
+\newcommand{\jared}[1]{}
+
+
+\setlist[description]{listparindent=\parindent,leftmargin=0em,itemsep=1em,topsep=0.3em,font={\normalfont\sffamily\sfsize}}
+\setlist[itemize]{topsep=0.3em, itemsep=0em, leftmargin=1.75em}
+
+%\newtheorem{theorem}{Theorem}
+%\newtheorem{lemma}{Lemma}
+%\newtheorem{corollary}{Corollary}
+%\newtheorem{definition}{Definition}
+\floatname{algorithm}{Algorithm}
+
+% algorithmicx extra constructs
+\algdef{SE}[DOWHILE]{Do}{DoWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}
+\algnewcommand\True{\textbf{true}}
+\algnewcommand\False{\textbf{false}}
+\renewcommand{\algorithmicforall}{\textbf{for each}}
+\newcommand{\StateX}{\State\hspace{\algorithmicindent}}
+
+% for indented block in algorithmic
+\algdef{SE}[SUBALG]{Indent}{EndIndent}{}{\algorithmicend\ }%
+\algtext*{Indent}
+\algtext*{EndIndent}
+
+\newcommand*{\algrule}[1][\algorithmicindent]{\makebox[#1][l]{\hspace*{.5em}\vrule height .75\baselineskip depth .25\baselineskip}}%
+
+\newcommand{\sfsize}{\fontsize{0.73\baselineskip}{0.73\baselineskip}\selectfont}
+\newcommand{\sans}[1]{\textsf{\sfsize \mbox{#1}}}
+\newcommand{\sansb}[1]{\textbf{\sans{\mbox{#1}}}}
+\newcommand{\para}[1]{\vspace{0.55em} \noindent \sansb{{\mbox{#1}}}}
+\newcommand{\brix}{\sans{TorBrix}\xspace}
+
+\newcommand{\mahdi}[1]{[{\bf Mahdi:\ } {\em #1}]}
+
+\begin{document}
+	\sloppy
+
+	\title{TorBrix: Blocking-Resistant Tor Bridge Distribution}
+	
+	\author{Mahdi Zamani$^\dag$ \and Jared Saia$^\ddag$ \and Jedidiah Crandall$^\ddag$}
+	
+	\institute{$^\dag$Visa Research, Palo Alto, CA, USA\\
+		$^\ddag$University of New Mexico, Albuquerque, NM, USA\\
+	\email{mzamani@visa.com, \{saia,crandall\}@cs.unm.edu}}	
+	
+	\maketitle
+
+\begin{abstract}
+
+%Tor relays Internet traffic through a world-wide network of volunteer nodes. These relays are publicly-known and hence may be blocked by censorship systems. To make blocking harder, Tor uses the notion of bridges; volunteer nodes that direct user traffic to the relays, but there is no complete public list of them. Unfortunately, malicious users can still obtain information about a large number of bridges and block them.
+
+	Tor is currently the most popular network for anonymous Internet communication. It critically relies on volunteer nodes called \emph{bridges} to relay Internet traffic when a user's ISP blocks connections to Tor. 
+	Unfortunately, current methods for distributing bridges are vulnerable to malicious users who obtain and block bridge addresses.
+	In this paper, we propose \brix, a protocol for privacy-preserving distribution of Tor bridges to $n$ users, even when an unknown number ${t < n}$ of these users are controlled by a malicious adversary. \brix distributes $O(t\log{n})$ bridges and guarantees that all honest users can connect to Tor with high probability after $O(\log{t})$ rounds of communication with the distributor. 
+	Our empirical evaluations show that \brix requires at least 20x fewer bridges and two orders of magnitude less running time than the state-of-the-art.
+	%We show that using our algorithm the number of times any user fails to connect to Tor via bridges is bounded by $O(\log{t})$ with high probability.
+%We also describe a technique based on the spectral method for detecting and evicting corrupted users.
+\end{abstract}
+
+\small{To be considered as a regular or a brief announcement paper.}
+
+\mahdi{Two ideas: (1) For each party count the number of blocked bridges assigned to him as his rank. Then assign a number of fake bridges to him proportional to his rank. (2) To improve load balancing and possibly the number of bridges used, pick $k$ bins and choose the lightest one. Now find the probability that a fixed bin is bad. see https://people.eecs.berkeley.edu/~sinclair/cs271/n15.pdf}
+
+\newpage
+
+\section{Introduction}
+Mass surveillance and censorship increasingly threaten democracy and freedom of speech. A growing number of governments around the world restrict access to the Internet to protect their domestic political, social, financial, and security interests~\cite{Turner:2016:Surveillance,Rushe:2012:Censorship}. Countering this trend is the rise of anonymous communication systems, which strive to foil censorship and preserve the anonymity of individuals in cyberspace. Tor~\cite{dingledine:2004} is the most popular of such systems with more than 2.5 million users on average per day~\cite{Tor:Users}. Tor relays Internet traffic via more than 6,500 volunteer nodes called \emph{relays} spread across the world~\cite{Tor:Relays}. By routing data through random paths in the network, Tor can protect the private information of its users such as their identity, geographical location, and content accessed.
+
+%Tor users can connect to the network and have their Internet data routed through the network before reaching any server, thus servers are not able to distinguish between Tor users, or to locate them geographically. 
+
+Since the list of all relays is publicly available, governments can block access to them. %Several studies show that access to the Tor network is being blocked actively by censors across the world~\cite{BridgeBlockingChina:2012,Sheharbano:2016}.
+When access to Tor is blocked, users can use \emph{bridges}, which are volunteer relays not listed in Tor's public directory~\cite{Dingledine06designof}. Bridges serve only as entry points into the rest of the Tor network, and their addresses are carefully distributed to the users, with the hope that they will not be learned by censors. 
+%Tor users behind censorship firewalls must find bridges through email, uncensored websites, etc. 
+As of March 2016, about 3,000 bridge nodes were running daily in the Tor network~\cite{Tor:Bridges}.
+
+Currently, bridges are distributed to users based on strategies such as CAPTCHA-enabled email-based distribution~\cite{Dingledine06designof}. Unfortunately, censors now use sophisticated attacks to obtain
+and block bridges, rendering Tor unavailable for many users~\cite{Dingledine:Bridges:2011,Ling:2012:infocom,BridgeBlockingChina:2012}.
+Additionally, current techniques for bridge distribution either (1) cannot provably guarantee that all \emph{honest}\footnote{By honest users, we mean the users that are not controlled by the censor to obtain the bridge addresses assigned to them.} users can access Tor~\cite{WangLBH:rBridge:13,McCoy:FC:2011,Sovran:2008:PSN}; (2) only work when the number of dishonest users is known in advance~\cite{Mahdian:2010}; (3) require fully trusted distributors~\cite{McCoy:FC:2011,Mahdian:2010,Sovran:2008:PSN}; and/or (4) cannot resist malicious attacks from the distributors~\cite{WangLBH:rBridge:13,McCoy:FC:2011,Mahdian:2010,Sovran:2008:PSN}.
+
+In this paper, we describe \brix, a bridge distribution protocol that guarantees Tor access to all honest users with high probability, even when there is an unknown number of corrupt users that can block access to all bridges they receive.  \brix distributes $O(t\log{n})$ bridges, where $n$ is the total number of users, and ${t < n}$ is the number of corrupt users.  This significantly improves over prior work by Mahdian~\cite{Mahdian:2010}, which distributes $O(t^2\log{n}/\log \log n)$ bridges, and also requires knowledge of $t$ in advance.
+
+%\brix achieves these bounds by adaptively increasing the number of bridges distributed among the users based on the number of bridges  blocked by the adversary. 
+
+Additionally, \brix uses secure multi-party computation protocols to ensure that  distributors do not learn user-bridge assignments, even when up to a $1/3$ fraction of the distributors are controlled by an adversary.  Finally, we stress that \brix can run independently from Tor so that the Tor network can focus on its primary purpose of providing anonymity.
+
+The rest of this paper is organized as follows. In Section~\ref{sec:model}, we describe our network and threat model. In Section~\ref{sec:results}, we state our main result as a theorem. We review related work in Section~\ref{sec:relatedwork}. In Section~\ref{sec:algorithm}, we describe our protocol for reliable bridge distribution; we start from a basic protocol and improve it as we continue. We describe our implementation of \brix and our simulation results in Section~\ref{sec:simulations}. Finally, we summarize and state our open problems in Section~\ref{sec:conclusion}.
+
+\subsection{Our Model} \label{sec:model}
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=0.64\linewidth]{images/model.pdf}
+	\caption{Our network model}
+	\label{fig:model}
+\end{figure}
+
+We now define our problem model, which is depicted, at a high-level, in Figure~\ref{fig:model}.
+
+%\jared{Need to rewrite this so that it describes the complete model}
+
+%\para{Our Model.}
+We assume there are $n$ \emph{users} who want to obtain bridge addresses to access Tor. Initially, we assume a single trusted server called the \emph{distributor}, which has access to a reliable supply of bridge addresses.  Later, we generalize to multiple distributors.
+
+We assume an adversary (or \emph{censor}) which can control up to $t$ of the users.  We call these adversarially-controlled users \emph{corrupt}. \fullpaper{The adversary can corrupt users by hacking into their computers, eavesdropping their communication, or introducing colluding nodes to the network.}
+The adversary is \emph{adaptive} in that it can corrupt users at any point of the protocol, up to the point of taking over $t$ users.  The adversary has the ability to \emph{block} any bridges received by any of the corrupt users.  He is not required to block bridges immediately upon receipt, but may rather strategically decide the best time to block a bridge.
+Users which are not corrupt are called \emph{honest}. Each honest user seeks to obtain  one bridge that is not blocked.  
+
+We make the standard assumption that there exists a rate-limited channel, such as email, that allows users to send requests for bridges to the distributor, and the distributor to send bridges to the users.\footnote{Completely blocking a service such as email would likely impose significant economic consequences for censors.  However, unfortunately, email alone does not enable real-time interaction with the Web.} The distributor runs our bridge distribution protocol locally and sends bridge assignments back to the users via the same channel. We assume the adversary has no knowledge of the private random bits used by our protocol.\fullpaper{We imagine that all communications over this channel are pseudonymous meaning that they do not reveal any information about the actual identities (i.e., IP addresses) of the sender and the recipient to the either sides of the communication.}
+
+\para{Bridge Reachability.}  We assume the distributor learns which bridges are blocked using scanning algorithms deployed outside the censored countries.  Efficient scanning algorithms are described in recent work by Dingledine~\cite{Dingledine:BridgeReach:2011}, Ensafi~\etal~\cite{Ensafi:2014:PAM}, and Burnett and Feamster~\cite{Burnett:2015:ELM}. 
+
+\subsection{Our Result} \label{sec:results}
+\noindent Below is our main theorem, which we prove in Section~\ref{sec:algorithm}.
+\begin{theorem}
+	\label{thm:main} There exists a bridge distribution protocol that can run among $m$ distributors and guarantee the following properties with probability ${1 - 1/n^c}$, for some constant ${c \geq 1}$, in the presence of a malicious adversary corrupting at most $\lfloor m/3 \rfloor$ of the distributors: % change this to ``at least with probability 1-1/n^c'' %
+	\begin{enumerate}[itemsep=-0.25em,topsep=0.5em]
+		\item The number of bridges distributed is $O(t\log{n})$;
+		\item All honest users can connect to Tor after ${\lceil \log{\lceil (t+1)/32 \rceil} \rceil + 1}$ rounds of communication with the distributors;
+		\item Each user receives $m$ messages in each round;
+		\item Each distributor sends/receives $O(m^2 + n)$ messages;
+		\item Each message has length $O(\log{n})$ bits.
+	\end{enumerate}
+\end{theorem}
+
+We simulate a proof-of-concept prototype of \brix to measure the running time and bridge cost of the protocol. We discuss our simulation results in Section~\ref{sec:simulations}.
+
+%\begin{figure}[t]
+%	\centering
+%	\includegraphics[width=0.6\linewidth]{images/single-alg}
+%	\caption{Single distributor model}
+%	\label{fig:singledist}
+%\end{figure}
+
+%The best known algorithm for bridge distribution~\cite{Mahdian:2010} only works when the number of corrupt users, $t$, is known in advance and requires at most ${t\left(1 + \lceil \log{(n/t)} \rceil \right)}$ bridges. In contrast, our algorithms not only do not require any prior knowledge about $t$ but also use fewer bridges.\todo{What?? $O(t\log{n})$ isn't fewer than~\cite{Mahdian:2010}}
+
+\section{Related Work} \label{sec:relatedwork}
+
+\para{Proxy Distribution.} The bridge distribution problem has been studied under the name \emph{proxy distribution}, where a set of proxy servers outside a censorship territory are distributed among a set of users inside the territory. %These proxies are used to relay Internet traffic to blocked websites. 
+
+The work closest to our own is that of Mahdian~\cite{Mahdian:2010}.  To the best of our knowledge, this is the only other result that gives theoretical guarantees against an omniscient adversary.  Mahdian's work assumes that the number of corrupt users, $t$, is known in advance. His algorithms may use up to ${O(t^2 \log{n} / \log{\log{n}})}$ bridges.
+
+Remaining related work on proxy distribution uses three main approaches.  First, proof-of-work based schemes, including the system of Feamster~\etal~\cite{Feamster:PETS:2003}.  Second, social networks based schemes, including the Kaleidoscope system of Sovran~\etal~\cite{Sovran:2008:PSN}, and the Proximax system of McCoy~\etal~\cite{McCoy:FC:2011}.  Finally, reputation based schemes, including the rBridge system proposed by Wang~\etal~\cite{WangLBH:rBridge:13}.  Our approach is essentially orthogonal to these schemes, in that proof-of-work, social networks, and reputation management can potentially be heuristically incorporated into the \brix system.
+
+\para{Handling DPI and Active Probing.} The Tor Project has developed a variety of tools known as \emph{pluggable transports}~\cite{Tor:PluggableTransport} to obfuscate the traffic transmitted between users and bridges. This makes it hard for the censor to perform \emph{deep packet inspection (DPI)} attacks, since distinguishing actual Tor traffic from legitimate-looking obfuscated traffic is hard.
+
+The censor can also block bridges using \emph{active probing}~\cite{Ensafi2015b}: he can passively monitor the network for suspicious traffic, and then actively probe dubious servers to block those identified as running the Tor protocol.
+%Solutions for handling DPI and active probing attacks are orthogonal to our solution for resisting blocking via colluding corrupt users. 
+%We believe that active probing will be defeated in the future using a combination of ideas from CAPTCHAs, port knocking~\cite{PortKnocking2003}, and format transforming encryption~\cite{Dyer:2013:PMM:2508859.2516657}.
+%Wang~\etal~\cite{Wang:2010:CCS} showed that current obfuscation mechanisms used in Tor can be reliably detected by censors with sufficiently low false-positive rates. 
+Depending on the sophistication of the censor, \brix may be used in parallel with tools that can handle DPI and active probing to provide further protection against blocking.
+
+%In a line of research, Winter and Lindskog~\cite{BridgeBlockingChina:2012}, Winter and Crandall~\cite{Winter:2012:login}, and Ensafi~\etal~\cite{Ensafi2015b} examined China's \emph{active probing} mechanisms against current enhanced circumvention mechanisms of Tor. By recruiting nodes that act like users, the censor passively monitors the network for suspicious traffic, actively probes the corresponding servers, and blocks those determined to run Tor.
+
+%\section{Preliminaries} \label{sec:preliminaries}
+%We now define our notation and describe the tools used throughout this paper.
+
+\para{Resource-Competitive Analysis.} Our analytical approach to bridge distribution can be seen as an application of the \emph{resource-competitive analysis} introduced by Gilbert~\etal~\cite{Gilbert:2012:RAN:2335470.2335471,Bender:2015:SIGACT}, which measures the performance of a system with respect to the unknown resource budget of an adversary: if the adversary has a budget of $t$, then the worst-case resource cost of the algorithm is measured by some function of $t$. The adversary's budget is frequently expressed by the number of corrupt nodes controlled by the adversary. This model allows the system to adaptively increase/decrease its resource cost with the \emph{current} amount of corruption by the adversary. Inspired by this model, we design resource-competitive algorithms for bridge distribution that scale reasonably with the adversary's budget.
+
+\section{Our Protocol} \label{sec:algorithm} 
+We first construct a bridge distribution protocol that is run locally by a trusted distributor. Then, we extend this protocol to multiple distributors, where no subset of less than a $1/3$ fraction of the distributors learns any information about the user--bridge assignments.
+%We prove the desired properties of these algorithms in Section~\ref{sec:ProofBasic} and Section~\ref{sec:multi-dist} respectively. 
+%In Section~\ref{sec:Fixed}, we improve our result by constructing a detection-and-eviction mechanism, where blocking parties are gradually detected and removed from the algorithm. We prove properties of this algorithm in Section~\ref{sec:ProofFixed}. 
+
+We say an event occurs \emph{with high probability}, if it occurs with probability at least \emph{${1-1/n^c}$}, for some constant ${c \geq 1}$. We denote the set of integers ${\{1,...,n\}}$ by $[n]$, the natural logarithm of any real number $x$ by $\ln{x}$, and the logarithm to the base 2 of $x$ by $\log{x}$. We denote a set of $n$ users participating in our protocol by ${\{u_1,...,u_n\}}$. We define the \emph{latency} of our protocol as the maximum number of rounds of communication that any user has to perform with the distributor(s) until he obtains at least one unblocked bridge. \fullpaper{We say a bridge is \emph{blocked} when the censor has restricted users' access to this bridge. We refer to the remaining bridges as \emph{unblocked} bridges.}
+
+\subsection{Basic Protocol} \label{sec:basic-alg}
+The most naive approach to distribute a set of bridges is to assign a unique bridge to each user.  Unfortunately, this does not scale: while the number of Tor users has nearly tripled in the past two years~\cite{Tor:BridgeUsers}, the number of bridges in the network has at best remained the same~\cite{Tor:Bridges}. %Since the number of users is often much larger than the number of bridges, only a small group of users would receive bridges.
+
+Thus, \brix assigns each bridge to multiple users.  In particular, we start with a ``small'' set of bridges, and assign each user a bridge selected uniformly at random from this set.  But how do we choose the size of this set?  If the set is too small, an adversary can corrupt a small number of bridges and easily prevent any users from accessing Tor.  If the set is too large, then we are wasting precious bridges.
+
+The key idea is to \emph{adjust} the number of bridges distributed in each round based on the number of bridges that have been blocked.  Our protocol is divided into rounds incremented by $i$.  We advance to the next round when the number of bridges blocked in the current round ($b_i$) exceeds a geometrically increasing threshold.  In each round, we increase geometrically the size of the set of bridges that we assign (this size is the value $d_i$).  In this way, we ensure that the number of bridges \brix uses is a slowly growing function of the number of bridges blocked.  %, which is a slowly growing function of the number of bad users $t$.
+
+%There are several technical issues remaining that must be addressed to ensure all users receive an unblocked bridge with high probability, and that we achieve the resource bounds of Theorem~\ref{thm:main}.  Next, we describe our design in detail, and how we address those issues. 
+
+One may divide the set of users into randomly-chosen disjoint subsets and assign a unique bridge to all users in each subset. While this approach would produce a fully load-balanced distribution of the users across the bridges, it seems hard to be implemented efficiently in a decentralized setting such as our multiple distributors model.\footnote{We are not aware of any efficient decentralized algorithm to partition a set of $n$ elements into $k$ randomly-chosen disjoint subsets.}
+%Known decentralized shuffling techniques such as~\cite{MovahediMPS:2015} are still impractical.} 
+
+%Alternatively, one may choose to assign to each user a bridge that is chosen uniformly and independently at random from the set of all bridges.\footnote{This can be viewed as a \mbox{\emph{balls and bins}} process~\cite{Michael2005}, where the users represent the balls, and the bridges represent the bins. Each ball is thrown at a bin chosen uniformly and independently at random.} This would not only make the algorithm simpler in the single distributor model but also, as we show in Section~\ref{sec:multi-dist}, can be efficiently implemented in the multiple distributors model using a standard distributed random generation protocol. In Section~\ref{sec:ProofBasic}, we also show that this approach can balance the user load among the bridges.
+
+%In both the second and the third approaches described above, an honest user would likely be assigned the same bridge that is also assigned to one or more corrupt users. If the adversary immediately blocks all the bridges addresses it learns from the corrupt users, then the user cannot connect to Tor. In Section~\ref{sec:ProofBasic}, we show that this happens with a constant probability.
+%To increase the likelihood that each honest user receives at least one bridge shared with no corrupt user, these approaches need to recruit and distribute a large number of bridges. %Even if the adversary does not block any bridges or changes its rates of blocking over time, these bridges cannot be \emph{reused} efficiently by the algorithm to 
+
+%In that case, most of the bridges 
+
+%This often results in waste  to the cannot adaptively 
+
+%Our protocol (shown in Algorithm~\ref{alg:Basic}) is run locally by one distributor.\footnote{By ``run locally'', we mean the distributor computes user-bridge assignments independent of any other distributor and without exchanging any information with them.} \brix proceeds in \emph{rounds} indicated by increments of the variable $i$ in the while loop.
+%Note that several iterations of the while loop may correspond to the same round depending on the condition in line~\ref{ln:ConditionSimple} of the algorithm. In each round, the protocol recruits $d_i$ bridges and assigns each user randomly to one of these bridges. Then, it continuously scans the set of bridges to count the number of blocked bridges, $b_i$. If this number exceeds a threshold, then the protocol proceeds to the next round. % is increased in each round exponentially. 
+
+The number of bridges distributed in every round is determined based on the threshold in that round as depicted in Figure~\ref{fig:rounds}. The exponential growth of the number of bridges distributed in each round allows us to achieve a logarithmic latency (in $t$) until all users can connect to Tor with high probability (see Lemma~\ref{lem:NumIterationsBasic}). 
+% TODO: EXPLAIN THAT THE AMOUNT OF BLOCKING THAT OUR protocol CAN HANDLE USING THE COST-COMPETITIVE GROWTH IS MUCH LARGET THAN PREVIOUS WORK (MAHDIAN)
+\begin{algorithm}[t]
+	\caption{\brix~-- Basic Protocol}
+	\label{alg:Basic}
+	\vspace{0.4em}
+	\textbf{Goal:} Distributes a set of $O(t\log{n})$ bridges among a set of users $\{u_1,...,u_n\}$.
+	
+	\algFont \vspace{2pt}
+	\begin{algorithmic}[1]
+		\Statex \hspace{-\algorithmicindent} Run $3\log{n}$ instances of the following algorithm in parallel with disjoint sets of bridges:
+		\State ${i \gets 1}$  \label{ln:algstart}
+		\While{\True}
+			\State $d_i \gets 2^{i+4}$	\label{ln:forparallel} \label{ln:ifreasonable}
+			%\If {${d_i < \frac{n}{3\log{n}}}$} 
+				\State $\{B_1,...,B_{d_i}\} \gets$ $d_i$ unblocked bridges \label{ln:RecruitBridges}						
+				\ForAll{$j \in [n]$}	\Comment{Distribute $d_i$ bridges}
+					\State Pick $k \in [d_i]$ uniformly at random 
+					\State Send bridge $B_{k}$ to user $u_j$				
+				\EndFor			\label{ln:IterationEnd}
+			%\Else
+			%	\State Assign a unique bridge to every user
+			%	\State \textbf{break}
+			%\EndIf \label{ln:IterationEnd}
+			\While{$b_i < 0.6 \times 2^{i+4}$} \label{ln:ConditionSimple} %\Comment{Wait until the next round}
+				\State $b_i \gets$ \# blocked bridges in $\{B_1, ..., B_{d_i}\}$
+			\EndWhile
+			\State $i \gets i+1$ \label{ln:IncrementSimple}
+		\EndWhile	\label{ln:algend}
+	\end{algorithmic}	
+\end{algorithm}
+In Lemma~\ref{lem:robustness}, we show that if one instance of steps~\ref{ln:algstart}--\ref{ln:algend} of Algorithm~\ref{alg:Basic} is executed, then it guarantees that all users can connect to Tor with some \emph{constant probability}. Therefore, if we run $3\log{n}$ instances in parallel, we can guarantee that all users connect to Tor \emph{with high probability}.
+
+\subsection{Some Modifications}
+
+\para{Reusing Bridges.}
+In every round, \brix only distributes unblocked bridges. A heuristic to reduce the total number of bridges required is to use unblocked bridges from previous rounds in the current distribution round. This can be done by removing blocked bridges from the pile of previously used bridges and adding a sufficient number of new bridges to accommodate the new load. One may choose to further reduce the number of bridges used by assigning new bridges only to those users who still do not have an unblocked bridge. %We skip this here to keep our algorithm and its analysis simple.
+
+%In each round, \brix sends to every user a single message containing $3\log{n}$ bridge addresses assigned to this user in all  instances of Algorithm~\ref{alg:Basic} that run in parallel. This message is sent to the user via the rate-limited channel (e.g., email). \fullpaper{This is done without requiring the distributor to know the actual IP address of the user. Once the user obtains the set of bridge addresses, he can try to connect to these bridges in parallel to reduce latency.}
+
+In the unlikely case that the censor blocks a significant number of the bridges such that the number of bridges to be distributed over all $3\log{n}$ instances exceeds the number of users, $n$, then it becomes more reasonable to assign each user a unique bridge. This avoids distributing more than $n$ bridges, which is overkill. Algorithm~\ref{alg:Basic} can be modified to add an if-statement after Line~\ref{ln:ifreasonable} to check if ${d_i \geq \frac{n}{3\log{n}}}$. If this is true, then the algorithm trivially assigns a unique bridge to every user and terminates. Otherwise, it executes lines~\ref{ln:RecruitBridges}--\ref{ln:IterationEnd}.
+The if-statement on Line~\ref{ln:ifreasonable} of Algorithm~\ref{alg:Basic} does this check and changes the distribution strategy as appropriate. Note that this happens only if the adversary blocks a significant number of bridges, which we believe does not occur in most practical cases. %If it happens, though, it becomes more reasonable for the algorithm to give each user a unique user.
+
+\para{Handling Serialization Attacks.} If the $3\log{n}$ instances run completely independently, then the adversary can take advantage of this to increase the latency of the algorithm by a factor of $3\log{n}$ using a \emph{serialization attack}. In this attack, the adversary can strategically coordinate with its corrupt users to block the assigned bridges in such a way that the instances proceed to the next round one at a time. 
+\brix prevents this attack by maintaining a single round counter, $i$, for all instances: whenever the number of blocked bridges in \emph{any} of the instances exceeds the threshold for the current round, all instances are taken to the next round. Since all instances are run by the distributor locally, $i$ can be easily synchronized between them. %\jared{Should this next sentence be deleted?} In Section~\ref{sec:synci}, we describe how to modify Algorithm~\ref{alg:Basic} to synchronize $i$.
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=0.88\linewidth]{images/rounds}
+	\caption{Number of bridges distributed in round $i$ of Algorithm~\ref{alg:Basic}. S and U indicate successful and unsuccessful iteration of the while-loop in Algorithm~\ref{alg:Basic}. An iteration is called successful when \emph{all} users are able to connect to Tor in that iteration. Otherwise, it is called an unsuccessful iteration. }
+	\label{fig:rounds}
+\end{figure}
+
+\para{Handling User Churn.} \label{sec:churn}
+Algorithm~\ref{alg:Basic} can only distribute bridges among a fixed set of users. A more realistic scenario is when users join or leave the algorithm frequently. One way to handle this is to add the new users to the algorithm at the beginning of the next round (\ie, after $i$ increments). This, however, introduces two challenges. First, the adversary can arbitrarily delay the next round, causing a denial of service attack. Second, our proof of robustness (Lemma~\ref{lem:robustness}) would not necessarily hold if $n$ changes, because the algorithm is repeated $3\log{n}$ times to ensure it succeeds with high probability.
+
+To resolve these challenges, \brix can assign $3\log{n}$ random bridges from the set of bridges used in the last round (\ie, the last time $i$ was incremented) to every new user.  If the total number of users, $n$, is doubled since the last round, we use $3 \times 2^{i+4}$ unblocked bridges and assign $3$ of them randomly to each user.  This ensures that the number of parallel instances always remains $3\log{n}$ even if $n$ changes, because $\log{n}$ is increased by one when $n$ is doubled. Therefore, each existing user must receive $3$ new bridges so that Lemma~\ref{lem:robustness} holds in the setting with churn.\jared{This last sentence is confusing.  Are you suggesting another change to the algorithm, or is this to justify the previous change?} Our remaining lemmas hold if users leave the system; thus, we only need to update $n$ when nodes leave.
+
+%This guarantees that new users are always assigned bridges once they join the system.
+
+
+
+Since distributing new bridges among existing users is done only after the number of users is doubled, the latency is increased by at most a $\log{n}$ term, where $n$ is the largest number of users in the system during a complete run of the algorithm.
+
+\subsection{Privacy-Preserving Bridge Distribution} \label{sec:multi-dist}
+We now consider a \emph{multiple distributors model}, where a group of \mbox{$m \ll n$} distributors collectively distribute bridge addresses among the users. 
+Our goal is to ensure that user--bridge assignments remain hidden from  any coalition of up to a $1/3$ fraction of distributors. We assume that a sufficient number of bridges have already registered their addresses in the system so that in each round the protocol can ask some of them to provide their IP addresses to the system to be distributed by the protocol.
+We assume that the distributors are connected to each other pairwise with private and authenticated channels.
+In this model, the adversary not only can corrupt an unknown number of the users, $t$ but can also maliciously control and read the internal state of up to $\lfloor m/3 \rfloor$ of the distributors. The corrupt distributors can deviate from our protocols in any arbitrary manner, \eg, by sending invalid messages or remaining silent. 
+
+The key tool to handle such a scenario is \emph{secure multiparty computation}.  In this problem, the goal is to compute a function over private inputs distributed over many nodes, even when up to a $1/3$ fraction of the nodes are controlled by an adversary, and to do so without revealing any information about the private input held by any node.  Seminal work by Goldreich, Micali and Wigderson~\cite{Goldreich:1987:PAM:28395.28420} described a protocol to solve secure multiparty computation for any function. Recent results have improved on this seminal work in terms of bandwidth and latency costs, and practicality~\cite{boyle2015large,DKMS-ICDCN-2014,bogetoft2009secure} (see also~\cite{lindell2009secure,saia2015recent} for surveys). 
+
+We can use secure multiparty computation to solve our multiple distributors problem in the following manner.  Initially, each bridge address is divided into $m$ shares that are given to each distributors in such a way that 1) no subset of less than a $1/3$ fraction of the distributors can learn the bridge address by sharing their shares; and 2) any subset of a $2/3$ fraction of the distributors can reconstruct the bridge address with their shares.  Standard approaches using Shamir secret sharing~\cite{shamir:how} and Reed-Solomon codes~\cite{Reed-Solomon1960} can achieve this.  
+
+Next, we use any secure multiparty computation protocol to essentially compute the function in Algorithm~\ref{alg:Basic}.  In particular, after running this secure multiparty computation, for each user, each distributor learns a share of the appropriate bridge to be sent to that user, and sends that share to the user.  In this way, (1) no coalition of less than a third of the distributors will learn which bridges map to which users; and (2) all users will receive enough correct shares to reconstruct the bridges assigned to them.
+
+
+\jared{I think it may be simplest to just give the standard secure MPC protocol here (not the leader based one).  It'll save space, and I think there's already too many ideas packed into this paper.
+We first construct a \emph{leader-based protocol}, where an honest-but-curious distributor called the \emph{leader} locally runs Algorithm~\ref{alg:Basic} over anonymous bridge addresses. The leader then sends anonymous user-bridge assignments to other distributors who can collectively ``open'' the assignments for the users. }
+
+%In each round $i$, the leader requests a group of at most $d_i$ bridges to secret-share their IP addresses among all distributors (including the leader) using Shamir's scheme~\cite{shamir:how}. 
+
+%Let $(B_1,...B_{d_i})$ denote the sequence of shares the leader receives once the bridges finish the secret sharing protocol. The leader runs Algorithm~\ref{alg:Basic} locally to assign $B_j$'s to the users randomly, for all ${j \in [d_i]}$. Then, the leader broadcasts the pair $(u_k, I_k)$ to all distributors, where $I_k$ is the set of indices of bridges assigned to user $u_k$, for all $k \in [1,...,n]$.
+
+
+%The notion of anonymity here is that the user-bridge assignments does not reveal any information about which bridges are assigned to which users to any of the distributors and to any coalition of up to a $1/3$ fraction of them.
+
+
+
+
+\jared{cut: Next, we construct a fully decentralized protocol, where a group of $m$ distributors collectively compute the bridge distribution functionality while resisting malicious fault from up to a $\lfloor m/3 \rfloor$ fraction of the distributors. Malicious distributors not only may share information with other malicious entities but also can deviate from our protocol in any arbitrary manner, \eg, by sending invalid messages or remaining silent.
+
+Both of these protocols rely on a secret sharing scheme for the bridges to share their IP addresses with the group of distributors. Before proceeding to our protocols, we briefly describe the secret sharing scheme used in our protocol.}
+
+\jared{This paragraph can be deleted if we just cite the relevant papers that enable asynchronous secure multiparty computation.
+
+\para{Secret Sharing.} A \emph{secret sharing} protocol allows a party (called \emph{the dealer}) to share a secret among $m$ parties such that any set of $\tau$ or fewer parties cannot gain any information about the secret, but any set of at least $\tau+1$ parties can reconstruct it. Shamir~\cite{shamir:how} proposed a secret sharing scheme, where the dealer shares a secret $s$ among $m$ parties by choosing a random polynomial $f(x)$ of degree $\tau$ such that ${f(0)=s}$. For all ${j \in [m]}$, the dealer sends $f(j)$ to the $j$-th party. Since at least ${\tau+1}$ points are required to reconstruct $f(x)$, no coalition of $\tau$ or less parties can reconstruct $s$.
+The reconstruction algorithm requires a Reed-Solomon decoding algorithm~\cite{Reed-Solomon1960} to correct up to $1/3$ invalid shares sent by dishonest distributors. In our protocols, we use the error correcting algorithm of Berlekamp and Welch~\cite{Berlekamp:Welch:1986}.}
+
+\fullpaper{We now briefly describe the reconstruction algorithm. Let $\mathbb{F}_{p}$ denote a finite field of prime order $p$, and $S=\{(x_{1},y_{1})\:|\:x_{j},y_{j}\in\mathbb{F}_{p}\}_{j=1}^{\eta}$ be a set of $\eta$ points, where $\eta-\varepsilon$ of them are on a polynomial $y=P(x)$ of degree $\tau$, and the rest $\varepsilon<(\eta-\tau+1)/2$ points are erroneous. Given the set of points $S$, the goal is to find the polynomial $P(x)$. The algorithm proceeds as follows. Consider two polynomials $E(x)=e_{0}+e_{1}x+...+e_{\varepsilon}x^{\varepsilon}$ of degree $\varepsilon$, and $Q(x)=q_{0}+q_{1}x+...+q_{k}x^{k}$ of degree $k\leq\varepsilon+\tau-1$ such that $y_{i}E(x_{i})=Q(x_{i})$ for all $i\in[\eta]$. This defines a system of $\eta$ linear equations with $\varepsilon+k=\eta$ variables $e_{0},...,e_{\varepsilon},q_{0},...,q_{k}$ that can be solved efficiently using Gaussian elimination technique to get the coefficients of $E(x)$ and $Q(x)$. Finally, calculate $P(x)=Q(x)/E(x)$.}
+
+%Each distributor then sends its shares of bridge addresses to the appropriate user with respect to the assignment information received from the leader. Finally, each user is able to reconstruct the bridge addresses assigned to him, because at least a 2/3 fraction of the distributors are honest and have correctly sent their shares to the user.
+%\begin{algorithm}[t]
+%	\caption{\brix -- Leader-Based Protocol}
+%	\label{alg:Leader}
+%	%\vspace{0.4em}
+%	%\textbf{Goal:} Distributes a set of $O(t\log{n})$ bridges among a set of users $\{u_1,...,u_n\}$.
+%	
+%	\algFont \vspace{2pt}
+%	\begin{algorithmic}[1]
+%		\State ${i \gets 0}$
+%		\While{\True}
+%			\State The leader requests $dd$
+%		\EndWhile	
+%	\end{algorithmic}	
+%\end{algorithm}
+
+\section{Protocol Analysis} \label{sec:ProofBasic}
+We now prove Theorem~\ref{thm:main}. 
+We assume a user can connect to Tor in an iteration of the while loop if and only if at least one unblocked bridge is assigned to it. 
+Although the adversary can corrupt up to $t$ users, only some of the corrupt users might be actively blocking bridges in any given round. From the distributor's perspective, since $t$ is unknown, only those users who have blocked at least one bridge in any round so far are considered corrupt and are counted towards the adversary's total budget. If a corrupt user has only attempted to block bridges that have already been blocked by other corrupt users, then our algorithm obviously cannot identify this user as a corrupt user until the user blocks at least one unblocked bridge in future rounds.
+ 
+Before stating our first lemma, we define the following variables:
+\begin{itemize}
+	\item $b_i$: number of bridges blocked in round $i$.	
+	\item $d_i$: number of bridges distributed in round $i$.
+	\item $t_i$: number of corrupt users that have blocked at least one bridge in round $i$.
+\end{itemize}
+
+\begin{lemma}[\sansb{Robustness}] \label{lem:robustness}
+	In round $i$ of Algorithm~\ref{alg:Basic}, if ${b_i < 0.6 \times 2^{i+4}}$, then all honest users can connect to Tor with high probability.
+\end{lemma}
+\begin{proof}
+	We first consider the execution of only one of the $3\log{n}$ instances of Algorithm~\ref{alg:Basic}. For each user, the algorithm chooses a bridge independently and uniformly at random and assigns it to the user. Without loss of generality, assume the corrupt users are assigned bridges first.
+	
+	For ${k=1,2,...,t_i}$, let $\left\{X_k\right\}$ be a sequence of random variables each representing the bridge assigned to the $k$-th corrupt user. Also, let $Y$ be a random variable corresponding to the number of \emph{bad} bridges, \ie, the bridges that are assigned to at least one corrupt user that has blocked a bridge in this round.  Since each user is assigned a fixed bridge with probability $1/d_i$, the probability that a bridge is assigned to at least one such corrupt user is ${1-(1-1/d_i)^{t_i}}$.  Thus, by linearity of expectation,
+	\[\E[Y] = \left(1 - \left(1-1/d_i\right)^{t_i}\right)d_i < (1 - e^{-(t_i+1)/d_i})d_i.\]
+	
+	We know ${t_i < 2^{i+4}}$, because in each round ${d_i = 2^{i+4}}$ bridges are distributed and each corrupt user is assigned exactly one bridge. \jared{This is confusing.  You say that Y is the number of bridges assigned to at least one corrupt user, but then you use $t_i$ here which only counts the number of corrupt users that have *blocked* bridges.} Hence, 
+	\begin{align}
+	\E[Y] < (1 - 1/e^{1+1/2^{i+4}})d_i \leq (1 - 1/e^2)d_i \label{eq:expectedBounds}
+	\end{align}
+	Therefore, in expectation at most a constant fraction of the bridges become bad in each instance of the algorithm. 
+	
+	We now show that the actual values of $Y$ are not much larger than its expected value.
+	The sequence ${\left\{Z_k = \E[Y|X_1,...,X_k]\right\}}$ defines a Doob martingale~\cite[Chapter~5]{dubhashi:2009}, where ${Z_0 = \E[Y]}$.  Since ${|Z_{k+1} - Z_k| \leq 1}$, ${Z_0 = \E[Y]}$, and ${Z_{t_i} = Y}$, by the Azuma-Hoeffding inequality~\cite[Theorem 5.2]{dubhashi:2009},
+	%\[\Pr\left(Y > \E[Y] + \lambda\right) \leq e^{\nicefrac{-2\lambda^2}{t_i}},\]
+	%for any ${\lambda > 0}$. 
+	%By setting ${\lambda = \sqrt{d_i}}$, we have
+	\begin{align}
+	\Pr(Y > \E[Y] + \sqrt{d_i}) \leq e^{-2d_i/t_i} < 1/e^2. \label{eq:p1}
+	\end{align}
+	The last step holds since ${t_i < d_i}$. Hence, with probability $1-1/e^2$, any user is assigned a bad bridge with probability at most.
+	\begin{align}
+	\frac{\E[Y] + \sqrt{d_i}}{d_i} &< \frac{(1-1/e^{1+1/2^{i+4}})d_i + \sqrt{d_i}}{d_i} \nonumber \\ &= 1/e^{1+1/2^{i+4}} + 1/\sqrt{d_i}, \label{eq:p2}
+	\end{align}
+	where the first step is achieved using~\eqref{eq:expectedBounds}.
+	
+	Now, let ${p_1 = \Pr(Y > \E[Y] + \sqrt{d_i})}$, and let $p_2$ be the probability that a fixed honest user is assigned a bad bridge in a fixed instance and a fixed round. From~\eqref{eq:p1} and~\eqref{eq:p2}, we have
+	\[p_1 < 1/e^2 \quad \text{and} \quad p_2 < 1/e^{1+1/2^{i+4}} + 1/\sqrt{d_i}.\]
+	Thus, the probability that a fixed user fails to receive a good bridge in a fixed instance and a fixed round is equal to ${p_1 + (1-p_1)p_2}$, which is at most $0.6$.
+	% CALCULATION URL: https://goo.gl/vjPLFT
+	
+	Over the $3 \log{n}$ instances, the probability that a user only receives bad bridges is at most ${0.6^{\lceil 3\log{n} \rceil} \leq 1/n^2}$.
+	% CALCULATION URL: http://www.wolframalpha.com/input/?i=0.6%5E(3log2(n))
+	By a union bound, the probability that any of the $n$ users receives only bad bridges in a round is at most $1/n$. 
+	%By Lemma~\ref{lem:NumIterationsBasic}, since the algorithm runs for at most ${\lceil\log{t}\rceil + 1 < n^{0.45}}$ rounds, by union bound the total error probability of the algorithm is at most $1/n$, for ${n > 50}$. 
+	%Therefore, all honest users can connect to Tor with high probability.
+\end{proof}
+
+%Algorithm~\ref{alg:Distribute} is fully load-balanced as it assigns exactly the same number of users to each bridge. Algorithm~\ref{alg:DistributeLB}, however, 
+
+
+\begin{lemma}[\sansb{Latency}] \label{lem:NumIterationsBasic}
+	By running Algorithm~\ref{alg:Basic}, all honest users can connect to Tor with high probability after at most ${\lceil \log{\lceil (t+1)/32 \rceil} \rceil + 1}$ iterations of the while loop.
+\end{lemma}
+\begin{proof}
+	Let $k$ denote the smallest number of rounds required until all users can connect to Tor with high probability. Intuitively, $k$ is  bounded, because the number of corrupt nodes, $t$, is bounded. In the following, we find $k$ with respect to $t$. 
+	
+	Fix one of the parallel instances of Steps~\ref{ln:algstart}--\ref{ln:algend} of Algorithm~\ref{alg:Basic}.  The adversary must block at least ${0.6 \times 2^{i+4}}$ bridges in round $i$ to force the algorithm to proceed to the next round. Let $\ell$ be the smallest integer such that ${2^\ell \geq t}$. In round $\ell$, the adversary has enough corrupt users to take the algorithm to round ${\ell + 1}$. However, in round ${{\ell + 1}}$, the adversary can block at most ${2^\ell < 2^{\ell+1}}$ bridges.  Thus, by Lemma~\ref{lem:robustness}, at the end of round  $\ell+1$,  \emph{all} honest users can connect to Tor with high probability. Since ${2^\ell \geq t}$, and the algorithm starts by distributing 32 bridges, 
+	$\ell+1 \leq \lceil \log{\lceil (t+1)/32 \rceil} \rceil + 1.$\end{proof}
+
+\begin{lemma}[\sansb{Bridge Cost}] \label{lem:NumBridgesBasic}
+	The total number of bridges used by Algorithm~\ref{alg:Basic} is at most $\min\left[{(10t + 96)\log{n}}, 2n\right]$. %${(8t - 2)c\log{n}}$. % 3\log{n}
+\end{lemma}
+\begin{proof}
+	Consider one of the $3\log{n}$ instances of Algorithm~\ref{alg:Basic}. The algorithm starts by distributing  $32$ bridges. In every round ${i > 0}$, the algorithm distributes a new bridge only to replace a bridge blocked in round ${i-1}$. Let $M_i$ be the total number of bridges used until round $i$; and let $a_i$ be the number of new bridges distributed in round $i$.  Then, 
+	\begin{align}
+	M_i = a_i + \sum_{j=0}^{i-1} b_j. \label{eq:NumBridges}
+	\end{align}
+	In round $i$, ${a_i \leq 2^{i+4}}$ and ${b_i < 0.6 \times 2^{i+4}}$.  Thus,
+	\[M_i < 2^i + 0.6\sum_{j=5}^{i-1} 2^j < 32\cdot(2^{i-4} - 1)\]
+	\[M_i < 2^{i+4} + 0.6\sum_{j=1}^{i-1} 2^{j+4} = 9.6(2^i - 2) + 2^{i+4}.\]
+	
+	From Lemma~\ref{lem:NumIterationsBasic}, it is sufficient to run the algorithm ${k = \lceil \log{\lceil (t+1)/32 \rceil} \rceil + 1}$ rounds. Then,	
+	\[M_k < 32\cdot(2^{\lceil \log{\lceil (t+1)/32 \rceil} \rceil + 1} - 1) \leq 4t + 32.\]
+	\[M_k < 9.6(2^k - 2) + 2^{k+4} \leq 3.2t + 32.\]
+	
+Summing over all $3 \log{n}$ instances, we get that the total number of bridges is at most $(10t + 96)\log{n}$. If, when the number of bridges to be distributed in the current round across all instances becomes larger than $n$, the algorithm sends one bridge to each user, we get that the total number bridges used is at most $\min\left[{(10t + 96)\log{n}}, 2n\right]$. %${(8t - 2)c\log{n}}$. % 3\log{n}
+\end{proof}
+
+\jared{I'm moving this to the end, since it doesn't directly connect to the main theorem.}
+Algorithm~\ref{alg:Basic} does not necessarily assign the same number of users to each bridge. However, in the following lemma, we show that each bridge is assigned to almost the same number of users as other bridges with high probability providing a reasonable level of load-balancing.
+
+%\begin{figure*}
+%	\hspace{-0.8em}\includegraphics[width=0.32\textwidth]{images/plot-prudent-65536.eps}
+%	\hspace{-0.5em}\includegraphics[width=0.32\textwidth]{images/plot-aggressive-65536.eps}
+%	\hspace{-0.5em}\includegraphics[width=0.32\textwidth]{images/plot-stochastic-65536.eps}
+%	\caption{Simulation results for ${n=65,536}$ and ${t=180}$ with prudent (left), aggressive (middle), and stochastic (right) adversary.}
+%	\label{fig:plot1} 
+%\end{figure*}
+
+\begin{lemma}[\sansb{Bridge Load-Balancing}]
+	Let $X$ be a random variable representing the maximum number of users assigned to any bridge, $Y$ be a random variable representing the minimum number of users assigned to any bridge, ${\mu = n/d_i}$ be the average number of users per bridge, and $z = \Theta\left(\frac{\ln{n}}{\ln{\ln{n}}}\right)$. Then, we have 
+	\[
+	\Pr\left(X \geq \mu z\right) \leq 2/n \quad \text{and} \quad 
+	\Pr\left(Y \leq \mu z\right) \leq 2/n.
+	\]
+\end{lemma}
+\begin{proof}
+	Each round of Algorithm~\ref{alg:Basic} can be seen as the classic balls-and-bins process: $n$ balls (users) are thrown independently and uniformly at random into $d_i$ bins (bridges). Then it is well known that the distribution of the number of balls in a bin is approximately Poisson with mean ${\mu = n/d_i}$ \cite[Chapter~5]{Michael2005}.
+	
+	Let $X_j$ be the random variable corresponding to the number of users assigned to the $j$-th bridge, and let $\tilde{X}_j$ be the Poisson random variable approximating $X_j$. We have ${\mu = \E[X_j] = \E[\tilde{X}_j] = n/d_i}$. We use the following Chernoff bounds from \cite[Chapter~5]{Michael2005} for Poisson random variables:
+	\begin{align}
+	\Pr(\tilde{X}_j \geq x) \leq e^{-\mu}(e\mu/x)^x \text{, when } x > \mu \label{eq:poissonMax}\\
+	\Pr(\tilde{X}_j \leq x) \leq e^{-\mu}(e\mu/x)^x \text{, when } x < \mu \label{eq:poissonMin}
+	\end{align}
+	
+	\noindent Let ${x = \mu y}$, where ${y = ez}$. From \eqref{eq:poissonMax}, we have
+	\begin{align}
+	\Pr(\tilde{X}_j \geq \mu y) &\leq \left(\frac{e^{y-1}}{y^y}\right)^\mu \nonumber \\
+	&\leq \frac{e^{y-1}}{y^y} 
+	= \frac{1}{e}\left(\frac{1}{z^z}\right)^e < \frac{1}{n^2}. \label{eq:approxBound}
+	\end{align}
+	The second step is because ${y^y > e^{y-1}}$ (since ${z > 1}$) and ${\mu > 1}$. The last step is because ${z = \Theta\left(\frac{\ln{n}}{\ln{\ln{n}}}\right)}$ is the solution of ${z^z = n}$. To show this, we take log of both sides of ${z^z = n}$ twice, which yields $\ln{z} + \ln{\ln{z}} = \ln{\ln{n}}$.  Note that $\ln{z} \leq \ln{z} + \ln{\ln{z}} = \ln{\ln{n}} < 2\ln{z}.$  Then, since $z\ln{z} = \ln{n}$, we have $z/2 < \frac{\ln{n}}{\ln{\ln{n}}} \leq z.$
+	Therefore, $z = \Theta\left(\frac{\ln{n}}{\ln{\ln{n}}}\right)$. 
+	
+	It is shown in~\cite[Corollary 5.11]{Michael2005} that for any event that is monotone in the number of balls, if the event occurs with probability at most $p$ in the Poisson approximation, then it occurs with probability at most $2p$ in the exact case. Since the maximum and minimum bridge loads are both monotonically increasing in the number of users, from (\ref{eq:approxBound}) we have
+	\begin{align*}
+	\Pr(X_j \geq \mu y) \leq 2\Pr(\tilde{X}_j \geq \mu y) < 2/n^2.
+	\end{align*}
+	
+	By applying a union bound over all bridges, the probability that the number of users assigned to any bridge will be more than $\mu z$ is at most $2/n$. The bound on the minimum load can be shown using inequality~(\ref{eq:poissonMin}) in a similar way.
+\end{proof}
+
+
+\section{Evaluation} \label{sec:simulations}
+
+\begin{figure*}[t]
+	\hspace{-0.4em}
+	\includegraphics[width=0.48\textwidth]{bridgeCost}	
+	\hspace{1em}
+	\includegraphics[width=0.48\textwidth]{latency}	
+	\hspace{0.3em}
+	\caption{Simulation results for ${n=8,192}$ and variable number of corrupt users showing bridge cost (left) and latency (right) of TorBrix and the dynamic bridge distribution algorithm of Mahdian~\cite{Mahdian:2010}.}
+	\label{fig:plot1} 
+\end{figure*}
+
+We implemented a proof-of-concept prototype of \brix and tested it in a simulated environment with $8,192$ users and one distributor. We assume the adversary blocks bridges aggressively meaning that it blocks every bridge it receives immediately. Experiments with other adversarial strategies gave similar results to those presented here.”%The prototype is written in C\# using .NET Framework 4.5. We ran the simulations on an Intel Core i5-4250U 1.3GHz machine with 4GB of RAM running Windows 10 Pro. 
+We also implemented the dynamic bridge distribution algorithm of Mahdian~\cite{Mahdian:2010} to compare with \brix. We set the parameters of both protocols in such a way that it fails with probability at most $10^{-5}$. We increase the number of corrupted users, $t$, from 0 to 225 with increments of 10 and measure the bridge cost and latency of both schemes. The results are shown in Figure~\ref{fig:plot1}. All numbers are averaged over 10 runs of each protocol.
+
+Figure~\ref{fig:plot1} shows that the number of bridges used by \brix is less than those used by Mahdian's algorithm when ${t\geq15}$. Moreover, this number scales significantly better for \brix than Mahdian's algorithm for larger values of $t$. For example, \brix requires 20x fewer bridges for ${t=200}$. Figure~\ref{fig:plot1} also shows it takes \brix significantly less time to guarantee robust bridge assignments. For example, \brix requires at least two orders of magnitude less time than~\cite{Mahdian:2010} to guarantee every user receives at least one unblocked bridge. In the \brix plots, sharp increases can be seen around $t=5, 10, 25, 55$, and $115$ that are due to the increase in the number of rounds required until the protocol converges.
+
+%\begin{figure*}
+%	\hspace{-0.8em}\includegraphics[width=0.34\textwidth]{images/plot-prudent-65536-large-t}
+%	\hspace{-0.5em}\includegraphics[width=0.34\textwidth]{images/plot-aggressive-65536-large-t}
+%	\hspace{-0.5em}\includegraphics[width=0.34\textwidth]{images/plot-stochastic-65536-large-t}
+%	\caption{Simulation results for ${n=65536}$ and ${t=32768}$ with prudent (left), aggressive (middle), and stochastic (right) adversary.}
+%	\label{fig:plot1-2} 
+%\end{figure*}
+
+%We evaluated \brix using five performance measures:
+%
+%\begin{enumerate}
+%	\item \textbf{Failed users:} Users who do not currently have any unblocked bridges. \label{measure:thirsty}
+%	\item \textbf{Bridges distributed:} Bridges distributed in the current round ($d_i$). \label{measure:d_i}
+%	\item \textbf{Bridges blocked:} Bridges blocked in the current round ($b_i$). \label{measure:b_i}
+%	\item \textbf{Bridges used:} Bridges distributed by the algorithm until this round ($M_i$). \label{measure:M_i}
+%	\item \textbf{Latency:} Rounds until all users receive at least one unblocked bridge. \label{measure:latency}
+%	%\item \sansb{D2U Messages:} Number of messages each user receives from the distributor(s). \label{measure:d2u}
+%	%\item \sansb{D2D Messages:} Number of messages each distributor receives from other distributors. \label{measure:d2d}
+%\end{enumerate}
+
+%In the first experiment (shown in Figure~\ref{fig:plot1}), we run the basic algorithm for ${n=65536}$ and ${t=180}$, and calculate Measures~\ref{measure:thirsty}--\ref{measure:M_i} at the end of each round after running the algorithm over ten samples for a fixed set of parameters. The experiment was run with the three different adversarial strategies. %The stochastic blocking, the adversary blocks each bridge with probability $0.95$. %To observe how the algorithm behaves when the number of corrupt users is large, we repeat the first experiment for ${t=32768}$. The result is depicted in Figure~\ref{fig:plot1-2}.
+%In the second experiment (shown in Figure~\ref{fig:plot2}), we run the algorithm using a single distributor for ${n=1024}$ and calculate Measures~\ref{measure:M_i} and \ref{measure:latency},while varying $t$ between $0$ and $1023$.
+
+%\jared{This paragraph is pretty subjective and content-free.  It'd be good to report information on the slope of the resource costs for example.
+%Our results indicate that \brix incurs small costs when there is little or no corruption in the network. Moreover, the algorithm scales well with the number of corruptions and can quickly adapt to the adversary's behavior. These all support our claim that \brix can be used for practical bridge distribution that guarantees access for all users.}
+%In the third experiment (shown in Figure~\ref{fig:plot3}), we run the algorithm among multiple distributors and evaluate the communication costs for the users and the distributors.
+
+\section{Conclusion and Open Problems} \label{sec:conclusion}
+We described \brix, a bridge distribution system that allows all honest users to connect to Tor in the presence of an adversary that corrupts an unknown number of users, Our algorithm can adaptively increase the number of bridges according to the behavior of the adversary and it uses a near-optimal number of bridges. %We also modified our algorithm slightly to handle user churn (join/leave) by adding small (constant) amortized latency.
+and can hide the bridge assignments from a colluding adversary. %We showed that the resulting protocol not only can protect the privacy of user-bridge assignments from any coalition of up to a $1/3$ fraction of the distributors but also can tolerate malicious attacks from a $1/3$ fraction of the distributors. 
+Empirical evaluations show that \brix requires at least 20x fewer bridges and two orders of magnitude less running time than the state-of-the-art.
+%
+As a future work, the current algorithm uses a relatively large number of bridges when the number of corrupt users is large. Is it possible to make the bridge cost sublinear in $t$ with practical constant terms? 
+%%instead of asking each bridge to secret share its address among all distributors, can the bridge send its encrypted address to one of the distributors and  perform a verifiable mechanism to   
+
+Another interesting direction is to use inexpensive honeypot (fake) bridges to detect and blacklist corrupt users. The protocol can assign a number of fake bridges to every user proportional to the number of blocked bridges (fake or real) assigned to the user in the previous round. This technique requires a mechanism such as CAPTCHA to prevent the adversary from distinguishing real bridges from the fake ones. Moreover, a colluding adversary may be able to compare bridges assigned to its corrupt users to detect honeypots.
+
+To better explore the possibility of achieving a sublinear bridge cost, one may consider finding lower bounds for different scenarios. For example, when each user is assigned at least one bridge, it seems impossible to achieve a sublinear bridge cost unless some of the bridges are fake, or we only distribute real bridges in random-chosen rounds. What is the lower bound for the number of rounds in these scenarios?
+Another interesting open problem is to examine if our current notion of robustness is overkill for practice. For example, is it possible to significantly reduce our costs by guaranteeing access for all but a constant number of users? %Such a solution often requires the number of users to be large
+
+\bibliographystyle{abbrv}
+\bibliography{security}
+
+\end{document}
