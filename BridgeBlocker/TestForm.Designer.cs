@@ -1,4 +1,4 @@
-﻿namespace TorBricks
+﻿﻿namespace TorBricks
 {
 	partial class MainForm
 	{
@@ -90,7 +90,7 @@
             this.rbSingleRun = new System.Windows.Forms.RadioButton();
             this.btnSave = new System.Windows.Forms.Button();
             this.pOutputPanel = new System.Windows.Forms.Panel();
-            this.chPlots = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            //this.chPlots = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.dgvStats = new System.Windows.Forms.DataGridView();
             this.col_i = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.col_n = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -121,7 +121,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbMarkerStep)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbBadCountMax)).BeginInit();
             this.pOutputPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.chPlots)).BeginInit();
+            //((System.ComponentModel.ISupportInitialize)(this.chPlots)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvStats)).BeginInit();
             this.pCollapseButtonRight.SuspendLayout();
             this.pCollapseButtonLeft.SuspendLayout();
@@ -835,7 +835,7 @@
             // 
             // pOutputPanel
             // 
-            this.pOutputPanel.Controls.Add(this.chPlots);
+            //this.pOutputPanel.Controls.Add(this.chPlots);
             this.pOutputPanel.Controls.Add(this.dgvStats);
             this.pOutputPanel.Controls.Add(this.pCollapseButtonRight);
             this.pOutputPanel.Controls.Add(this.pCollapseButtonLeft);
@@ -847,35 +847,36 @@
             // 
             // chPlots
             // 
-            this.chPlots.BorderlineColor = System.Drawing.Color.Black;
-            this.chPlots.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea1.AxisX.MajorGrid.LineWidth = 0;
-            chartArea1.AxisY.MajorGrid.LineWidth = 0;
-            chartArea1.Name = "ChartArea1";
-            this.chPlots.ChartAreas.Add(chartArea1);
-            this.chPlots.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend1.DockedToChartArea = "ChartArea1";
-            legend1.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Left;
-            legend1.Name = "Legend1";
-            this.chPlots.Legends.Add(legend1);
-            this.chPlots.Location = new System.Drawing.Point(15, 0);
-            this.chPlots.Name = "chPlots";
-            series1.BorderWidth = 2;
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series1.Font = new System.Drawing.Font("Times New Roman", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            series1.YValuesPerPoint = 6;
-            this.chPlots.Series.Add(series1);
-            this.chPlots.Size = new System.Drawing.Size(715, 766);
-            this.chPlots.TabIndex = 18;
-            this.chPlots.Text = "chart1";
-            this.chPlots.Visible = false;
-            this.chPlots.MouseMove += new System.Windows.Forms.MouseEventHandler(this.chPlots_MouseMove);
+            //this.chPlots.BorderlineColor = System.Drawing.Color.Black;
+            //this.chPlots.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
+            //chartArea1.AxisX.MajorGrid.LineWidth = 0;
+            //chartArea1.AxisY.MajorGrid.LineWidth = 0;
+            //chartArea1.Name = "ChartArea1";
+            //this.chPlots.ChartAreas.Add(chartArea1);
+            //this.chPlots.Dock = System.Windows.Forms.DockStyle.Fill;
+            //legend1.DockedToChartArea = "ChartArea1";
+            //legend1.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Left;
+            //legend1.Name = "Legend1";
+            //this.chPlots.Legends.Add(legend1);
+            //this.chPlots.Location = new System.Drawing.Point(15, 0);
+            //this.chPlots.Name = "chPlots";
+            //series1.BorderWidth = 2;
+            //series1.ChartArea = "ChartArea1";
+            //series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            //series1.Font = new System.Drawing.Font("Times New Roman", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            //series1.Legend = "Legend1";
+            //series1.Name = "Series1";
+            //series1.YValuesPerPoint = 6;
+            //this.chPlots.Series.Add(series1);
+            //this.chPlots.Size = new System.Drawing.Size(715, 766);
+            //this.chPlots.TabIndex = 18;
+            //this.chPlots.Text = "chart1";
+            //this.chPlots.Visible = false;
+            //this.chPlots.MouseMove += new System.Windows.Forms.MouseEventHandler(this.chPlots_MouseMove);
             // 
             // dgvStats
             // 
+            this.dgvStats.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.dgvStats.AllowUserToAddRows = false;
             this.dgvStats.AllowUserToDeleteRows = false;
             this.dgvStats.AllowUserToResizeRows = false;
@@ -1064,7 +1065,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbMarkerStep)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbBadCountMax)).EndInit();
             this.pOutputPanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.chPlots)).EndInit();
+            //((System.ComponentModel.ISupportInitialize)(this.chPlots)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvStats)).EndInit();
             this.pCollapseButtonRight.ResumeLayout(false);
             this.pCollapseButtonLeft.ResumeLayout(false);
@@ -1101,7 +1102,7 @@
         private System.Windows.Forms.Button btnCollapseLeft;
         private System.Windows.Forms.Panel pCollapseButtonRight;
         private System.Windows.Forms.Button btnCollapseRight;
-        private System.Windows.Forms.DataVisualization.Charting.Chart chPlots;
+        //private System.Windows.Forms.DataVisualization.Charting.Chart chPlots;
         private System.Windows.Forms.DataGridView dgvStats;
         private System.Windows.Forms.DataGridViewTextBoxColumn col_i;
         private System.Windows.Forms.DataGridViewTextBoxColumn col_n;

@@ -10,7 +10,8 @@ using System.Threading.Tasks;
 namespace TorBricks
 {
 	public delegate void YieldHandler(double threshold, int repeatCount);
-	public delegate bool RoundEndHandler(int round, int bridgeCount, int blockedCount);
+	public delegate bool RoundEndHandler(int round, int bridgeCount, int blockedCount, int bridgesSoFar);
+    public delegate void RunEndHandler(int numRounds, int bridgesUsed);
     public delegate void Distribute(List<long> bridges);
 
     //public class BridgeShare
@@ -111,6 +112,7 @@ namespace TorBricks
         public DistributeAlgorithm Algorithm { get; private set; }
 		public event YieldHandler OnYield;
         public event RoundEndHandler OnRoundEnd;
+        public event RunEndHandler OnRunEnd;
 
         /// <summary>
         /// The distribution method
@@ -168,6 +170,7 @@ namespace TorBricks
 
             int i = 0, d = 0;       // Round number, number of bridges distributed in the current round (i=4 gives a constant failure probability of ~10^-4)
             int n = Users.Count;    // Number of users
+            int bridgesBlockedSoFar = 0, bridgeCount = 0, bridgesUsedSoFar = 0;
             bool stopped = false, stable = false, nextRound = true;
             var repeatBridges = new List<long>[repeatCount];      // List of bridges distributed in each repeat
 
@@ -219,9 +222,14 @@ namespace TorBricks
                     if (OnYield != null)
                         OnYield(threshold(i), repeatCount);
 
+                    // Compute some measurments for the round
+					bridgeCount = d * repeatCount < n ? d * repeatCount : n;
+					bridgesUsedSoFar += bridgesBlockedSoFar + bridgeCount;
+                    bridgesBlockedSoFar += blockedBridges.Count;
+
                     // Log the end of round
                     if (OnRoundEnd != null)
-                        stopped = OnRoundEnd(i, d * repeatCount < n ? d * repeatCount : n, blockedBridges.Count);
+                        stopped = OnRoundEnd(i, bridgeCount, blockedBridges.Count, bridgesUsedSoFar);
                 }
                 else stable = true;
 
@@ -235,6 +243,8 @@ namespace TorBricks
                 }
                 blockedBridges.Clear();
             }
+			if (OnRunEnd != null)
+				OnRunEnd(i, bridgesUsedSoFar);
         }
 
         private void Assign(long userPseudonym, long bridgePseudonym)
@@ -247,7 +257,8 @@ namespace TorBricks
 
         private void RecruitBridges(int num)
         {
-            // Invite "num" bridges via the pseudonym network to join the protocol.
+            // Invite "num" bridges via the pseudonym network to join the protocol
+            Debug.Assert(BridgePseudonyms.Count >= num);
             for (int i = 0; i < num; i++)
                 SendEmail(BridgePseudonyms[i], null, MessageType.JoinRequest);
         }

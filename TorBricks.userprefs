@@ -1,0 +1,16 @@
+﻿<Properties StartupConfiguration="{89682599-1571-49A9-9578-3F41BED1303B}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="BridgeBlocker/TestForm.cs">
+    <Files>
+      <File FileName="Node.cs" Line="39" Column="1" />
+      <File FileName="BridgeBlocker/TestForm.cs" Line="111" Column="86" />
+      <File FileName="Distributor.cs" Line="89" Column="21" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.BridgeBlocker PreferredExecutionTarget="MonoDevelop.Default" />
+  <MultiItemStartupConfigurations />
+</Properties>
